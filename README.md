@@ -14,17 +14,17 @@ Get a full list of games for Nintendo Switch, and find the lowest prices on Andr
 
 * Build it using Android Studio or gradle script
 
-## OPEN SOURCE LICENSES
-
-<ul>
-    <li>okhttp: <a href="https://github.com/square/okhttp/blob/master/LICENSE.txt">APL 2.0</a></li>
-</ul>
-
 ### To Do List
 
 * Add UI
 * Improve the way to grab data
 * Add notification for new game release or discount
+
+## OPEN SOURCE LICENSES
+
+<ul>
+    <li>okhttp: <a href="https://github.com/square/okhttp/blob/master/LICENSE.txt">APL 2.0</a></li>
+</ul>
 
 ### LICENSE
 
