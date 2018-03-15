@@ -24,6 +24,7 @@
 
 <ul>
     <li>okhttp: <a href="https://github.com/square/okhttp/blob/master/LICENSE.txt">APL 2.0</a></li>
+    <li>CircleImageView: <a href="https://github.com/hdodenhof/CircleImageView/blob/master/LICENSE.txt">APL 2.0</a></li>
 </ul>
 
 ### LICENSE
