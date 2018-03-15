@@ -37,7 +37,14 @@ public class GameCursorWrapper extends CursorWrapper {
         game.setUsNsUid(us_nsuid);
         game.setEuNsUid(eu_nsuid);
         game.setJpNsUid(jp_nsuid);
-        game.setDiscount(discount.equals("1"));    // null and 0 equal false
+
+        // null and 0 equal false
+        if (discount == null) {
+            game.setDiscount(false);
+        } else {
+            game.setDiscount(discount.equals("1"));
+        }
+
         game.setIconUrl(icon_url);
         game.setUrl(url);
         game.setReleaseDate(release_date);
