@@ -1,6 +1,6 @@
 ## NintendoEShopHelper
 
-Get a full list of games for Nintendo Switch, and find the lowest prices.  
+Get a full list of games for Nintendo Switch, and find the lowest prices
 
 [中文说明](https://github.com/Dounx/NintendoEShopHelper/master/docs/README-zh.md) | [Wiki](https://github.com/Dounx/NintendoEShopHelper/wiki)
 
