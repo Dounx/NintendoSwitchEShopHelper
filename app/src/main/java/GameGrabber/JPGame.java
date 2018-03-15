@@ -1,5 +1,8 @@
 package GameGrabber;
 
+/**
+ * It's just a class represent Japan games, here is nothing worth to read
+ */
 class JPGame {
     private String mInitialCode;
     private String mNsUid;

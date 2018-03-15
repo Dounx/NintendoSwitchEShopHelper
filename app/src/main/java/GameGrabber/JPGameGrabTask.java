@@ -19,6 +19,12 @@ import okhttp3.Response;
 
 import static GameDbSchema.GameDbSchema.*;
 
+/**
+ * Request all the games and the respond is a xml file
+ * Japan's API can only return little info
+ * So we just get nsuid from them
+ */
+
 public class JPGameGrabTask extends AsyncTask<String, Integer, Integer> {
     private static final int TYPE_SUCCESS = 0;
     private static final int TYPE_FAILED = 1;
@@ -37,6 +43,7 @@ public class JPGameGrabTask extends AsyncTask<String, Integer, Integer> {
     protected Integer doInBackground(String... params) {
         OkHttpClient client = new OkHttpClient();
 
+        //// We can grab all the games info with a request
         Request request = new Request.Builder()
                 .url("https://www.nintendo.co.jp/data/software/xml/switch.xml")
                 .build();
@@ -62,10 +69,10 @@ public class JPGameGrabTask extends AsyncTask<String, Integer, Integer> {
                 break;
             default:
         }
+
+        // Close the database connection
         mDatabase.close();
     }
-
-
 
     private void parseXMLWithPullAndAddToDb(String xmlData) {
         try {
@@ -110,6 +117,7 @@ public class JPGameGrabTask extends AsyncTask<String, Integer, Integer> {
                                 jpGame.setDlIconFlg(xmlPullParser.nextText());
                                 break;
                             case "LinkURL":
+                                // Parse the LinkURL to complete url
                                 jpGame.setLinkURL("https://ec.nintendo.com/JP/ja" + xmlPullParser.nextText());
                                 break;
                             case "ScreenshotImgFlg":
@@ -140,6 +148,8 @@ public class JPGameGrabTask extends AsyncTask<String, Integer, Integer> {
         ContentValues values = getContentValues(jpGame);
 
         JPGameCursorWrapper cursor = queryJPGames("title_name = ?", new String[]{jpGame.getTitleName()});
+
+        // If exist, just update info, else insert to it
         if (cursor.moveToFirst()) {
             mDatabase.update(JPGameTable.NAME, values, "title_name = ?", new String[]{jpGame.getTitleName()});
         } else{
@@ -149,7 +159,6 @@ public class JPGameGrabTask extends AsyncTask<String, Integer, Integer> {
     }
 
     private static ContentValues getContentValues(JPGame jpGame) {
-
         ContentValues values = new ContentValues();
         values.put(JPGameTable.Cols.INITIAL_CODE, jpGame.getInitialCode());
         values.put(JPGameTable.Cols.NSUID, jpGame.getNsUid());
@@ -181,10 +190,20 @@ public class JPGameGrabTask extends AsyncTask<String, Integer, Integer> {
         return new JPGameCursorWrapper(cursor);
     }
 
+    /**
+     * Parse Game Code.
+     * @param gameCode A complete game code, but we need just 4-digit ( For linking USGame, EUGame and JPGame table )
+     * @return Parsed 4-digit game code
+     */
     private String parseGameCode(String gameCode) {
         return gameCode.length() == 8? gameCode.substring(3, 7): null;
     }
 
+    /**
+     * Parse nsuid
+     * @param linkUrl Contains nsuid
+     * @return Nsuid
+     */
     private String parseNsUid(String linkUrl) {
         return linkUrl.split("https://ec.nintendo.com/JP/ja/titles/")[1];
     }

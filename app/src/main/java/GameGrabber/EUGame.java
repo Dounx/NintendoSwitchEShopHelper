@@ -1,5 +1,8 @@
 package GameGrabber;
 
+/**
+ * It's just a class represent Europe games, here is nothing worth to read
+ */
 class EUGame {
     private String mFsId;
     private String mChangeDate;

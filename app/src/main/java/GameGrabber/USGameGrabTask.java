@@ -18,6 +18,9 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 
+/**
+ * Request all the games and the respond is a json style
+ */
 public class USGameGrabTask extends AsyncTask<String, Integer, Integer> {
     private static final int TYPE_SUCCESS = 0;
     private static final int TYPE_FAILED = 1;
@@ -39,7 +42,8 @@ public class USGameGrabTask extends AsyncTask<String, Integer, Integer> {
         int offset = 0;
         int total = 1;
 
-            while (offset < total + LIMIT) {    // Need to grab the lase games, so just plus LIMIT and finally total = -1
+        //// We can grab 200 games info with a request
+        while (offset < total + LIMIT) {    // Need to grab the lase games, so just plus LIMIT and finally total = -1
             HttpUrl httpUrl = new HttpUrl.Builder()
                     .scheme("https")
                     .host("nintendo.com")
@@ -83,6 +87,8 @@ public class USGameGrabTask extends AsyncTask<String, Integer, Integer> {
                 break;
             default:
         }
+
+        // Close the database connection
         mDatabase.close();
     }
 
@@ -161,6 +167,8 @@ public class USGameGrabTask extends AsyncTask<String, Integer, Integer> {
         ContentValues values = getContentValues(usGame);
 
         USGameCursorWrapper cursor = queryUSGames("title = ?", new String[]{usGame.getTitle()});
+
+        // If exist, just update info, else insert to it
         if (cursor.moveToFirst()) {
             mDatabase.update(USGameTable.NAME, values, "title = ?", new String[]{usGame.getTitle()});
         } else{
@@ -206,6 +214,11 @@ public class USGameGrabTask extends AsyncTask<String, Integer, Integer> {
         return values;
     }
 
+    /**
+     * Parse Game Code
+     * @param gameCode A complete game code, but we need just 4-digit ( For linking USGame, EUGame and JPGame table )
+     * @return Parsed 4-digit game code
+     */
     private String parseGameCode(String gameCode) {
         return gameCode.length() == 9? gameCode.substring(4, 8): null;
     }

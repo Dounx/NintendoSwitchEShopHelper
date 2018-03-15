@@ -18,6 +18,12 @@ import okhttp3.Response;
 
 import static GameDbSchema.GameDbSchema.*;
 
+/**
+ * Request all the games and the respond is a json style
+ * Europe's API can return much useful info
+ * Such as IsDiscount
+ */
+
 public class EUGameGrabTask  extends AsyncTask<String, Integer, Integer>  {
     private static final int TYPE_SUCCESS = 0;
     private static final int TYPE_FAILED = 1;
@@ -39,6 +45,7 @@ public class EUGameGrabTask  extends AsyncTask<String, Integer, Integer>  {
     protected Integer doInBackground(String... params) {
         OkHttpClient client = new OkHttpClient();
 
+        //// We can grab all the games info with a request
         HttpUrl httpUrl = new HttpUrl.Builder()
                 .scheme("https")
                 .host("search.nintendo-europe.com")
@@ -78,6 +85,7 @@ public class EUGameGrabTask  extends AsyncTask<String, Integer, Integer>  {
                 break;
             default:
         }
+        // Close the database connection
         mDatabase.close();
     }
 
@@ -193,6 +201,8 @@ public class EUGameGrabTask  extends AsyncTask<String, Integer, Integer>  {
         ContentValues values = getContentValues(euGame);
 
         EUGameCursorWrapper cursor = queryEUGames("title = ?", new String[]{euGame.getTitle()});
+
+        // If exist, just update info, else insert to it
         if (cursor.moveToFirst()) {
             mDatabase.update(EUGameTable.NAME, values, "title = ?", new String[]{euGame.getTitle()});
         } else{
@@ -272,6 +282,11 @@ public class EUGameGrabTask  extends AsyncTask<String, Integer, Integer>  {
         return new EUGameCursorWrapper(cursor);
     }
 
+    /**
+     * Parse Game Code.
+     * @param gameCode A complete game code, but we need just 4-digit ( For linking USGame, EUGame and JPGame table )
+     * @return Parsed 4-digit game code
+     */
     private String parseGameCode(String gameCode) {
         return gameCode.length() == 9? gameCode.substring(4, 8): null;
     }

@@ -14,6 +14,12 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 
+/**
+ * The most waste time task.
+ * Request all the countries have e-shop
+ * Firstly get all countries
+ * Then use price API find the supported countries
+ */
 public class SupportedCountryGrabTask extends AsyncTask<String, Integer, Integer> {
     private static final int TYPE_SUCCESS = 0;
     private static final int TYPE_FAILED = 1;
@@ -48,7 +54,6 @@ public class SupportedCountryGrabTask extends AsyncTask<String, Integer, Integer
         }
 
         for (int i = 0; i < mCountries.size(); i++) {
-            //// US
             HttpUrl httpUrl1 = new HttpUrl.Builder()
                     .scheme("https")
                     .host("api.ec.nintendo.com")
@@ -56,7 +61,7 @@ public class SupportedCountryGrabTask extends AsyncTask<String, Integer, Integer
                     .addPathSegment("price")
                     .addQueryParameter("lang", "en")
                     .addQueryParameter("country", mCountries.get(i).getCode())
-                    .addQueryParameter("ids", "70010000000141,70010000000024,70010000000027")
+                    .addQueryParameter("ids", "70010000000141,70010000000024,70010000000027")  // 1-2 switch's nsuid, with US, EU and JP
                     .build();
 
             Request priceRequest1 = new Request.Builder()
@@ -69,6 +74,7 @@ public class SupportedCountryGrabTask extends AsyncTask<String, Integer, Integer
 
                 JSONObject jsonObject = new JSONObject(responseData);
 
+                // If sales_status is onsale, represent the e-shop is exist, and also can get the country belong to which area
                 if (jsonObject.has("prices")) {
                     if (jsonObject.getJSONArray("prices").getJSONObject(0).getString("sales_status").equals("onsale")) {
                         mCountries.get(i).setBelong("US");

@@ -13,7 +13,9 @@ import GameDbSchema.GameCursorWrapper;
 
 import static GameDbSchema.GameDbSchema.*;
 
-
+/**
+ * Singleton pattern for Game class
+ */
 public class GameLab {
     private static GameLab sGameLab;
     private final Context mContext;
@@ -45,6 +47,7 @@ public class GameLab {
         return games;
     }
 
+    // Close the database connection
     public void Clean() {
         if (mDatabase.isOpen()) {
             mDatabase.close();

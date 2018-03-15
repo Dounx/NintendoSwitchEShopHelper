@@ -19,6 +19,12 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 
+/**
+ * The most complex task
+ * Request with a game and the respond is a json style
+ * Nintendo's API can only return a game with a country one time ( Or a country with 50 games )
+ * Game's nsuid represent a game
+ */
 public class PriceQueryTask extends AsyncTask<String, Integer, Price> {
 
     private final DownloadListener mListener;
@@ -100,16 +106,20 @@ public class PriceQueryTask extends AsyncTask<String, Integer, Price> {
 
         for (Price price : priceList) {
             double rates = ratesMap.get(price.getCurrency());
+
+            // calculate price
             double basePrice = Double.parseDouble(price.getPrice()) / rates;
             price.setPrice(String.valueOf(basePrice));
         }
 
+        // Sort list
         Collections.sort(priceList,new Comparator<Price>(){
             public int compare(Price arg0, Price arg1) {
                 return arg0.getPrice().compareTo(arg1.getPrice());
             }
         });
 
+        // Just for debug
         Log.d("Price", "Lowest Price: " + priceList.get(0).getPrice());
         Log.d("Price", "Lowest Country: " + mSupportedCountryLab.getCountryName(priceList.get(0).getCountryCode()));
 

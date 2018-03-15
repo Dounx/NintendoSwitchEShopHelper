@@ -12,6 +12,9 @@ import GameDbSchema.GameBaseHelper;
 import GameDbSchema.GameDbSchema.SupportedCountryTable;
 import GameDbSchema.SupportedCountryCursorWrapper;
 
+/**
+ * Singleton pattern for SupportedCountry class
+ */
 public class SupportedCountryLab {
     private static  SupportedCountryLab sSupportedCountryLab;
     private final Context mContext;
@@ -54,6 +57,8 @@ public class SupportedCountryLab {
         ContentValues values = getContentValues(supportedCountry);
 
         try (SupportedCountryCursorWrapper cursor = querySupportedCountries("name = ?", new String[]{supportedCountry.getName()})) {
+
+            // If exist, just update info, else insert to it
             if (cursor.moveToFirst()) {
                 mDatabase.update(SupportedCountryTable.NAME, values, "name = ?", new String[]{supportedCountry.getName()});
             } else{
@@ -62,6 +67,7 @@ public class SupportedCountryLab {
         }
     }
 
+    // Close the database connection
     public void Clean() {
         if (mDatabase.isOpen()) {
             mDatabase.close();

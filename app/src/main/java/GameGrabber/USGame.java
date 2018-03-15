@@ -1,5 +1,8 @@
 package GameGrabber;
 
+/**
+ * It's just a class represent USA games, here is nothing worth to read
+ */
 class USGame {
     private String mCategory;
     private String mSlug;

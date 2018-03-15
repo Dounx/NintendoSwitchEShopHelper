@@ -1,5 +1,8 @@
 package GameGrabber;
 
+/**
+ * It's just a class represent supported countries by nintendo e-shop, here is nothing worth to read
+ */
 public class SupportedCountry {
     private String mName;
     private String mCode;

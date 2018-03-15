@@ -1,10 +1,13 @@
 package GameGrabber;
 
+/**
+ * The final class showed for users, it's data from Game View (from database)
+ */
 public class Game {
     private String mUsTitle;
     private String mEuTitle;
     private String mJpTitle;
-    private String mGameCode;    // Parsed the game code, such as HACPAACCA become AACC
+    private String mGameCode;    // Parsed game code, such as HACPAACCA become AACC
     private String mLanguage;
     private String mUsNsUid;
     private String mEuNsUid;

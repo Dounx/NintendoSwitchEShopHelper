@@ -1,5 +1,8 @@
 package GameGrabber;
 
+/**
+ * It's a inner class for Game class
+ */
 public class Price {
     private String mPrice;
     private String mCountryCode;
