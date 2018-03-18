@@ -1,4 +1,4 @@
-package me.dounx.nintendoeshophelper;
+package Util;
 
 public class ConvertBetweenStringAndStringArray {
     private static final String strSeparator = ",";

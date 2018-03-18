@@ -12,7 +12,7 @@ import org.json.JSONObject;
 import GameDbSchema.GameBaseHelper;
 import GameDbSchema.GameDbSchema.USGameTable;
 import GameDbSchema.USGameCursorWrapper;
-import me.dounx.nintendoeshophelper.ConvertBetweenStringAndStringArray;
+import Util.ConvertBetweenStringAndStringArray;
 import okhttp3.HttpUrl;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -63,8 +63,7 @@ public class USGameGrabTask extends AsyncTask<String, Integer, Integer> {
             Request request = new Request.Builder()
                     .url(httpUrl)
                     .build();
-            try {
-                Response response = client.newCall(request).execute();
+            try (Response response = client.newCall(request).execute()) {
                 String responseData = response.body().string();
                 total = parseJsonWithJSONObjectAndAddToDB(responseData);
             } catch (Exception e) {

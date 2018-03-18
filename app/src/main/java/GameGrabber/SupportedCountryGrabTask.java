@@ -68,8 +68,7 @@ public class SupportedCountryGrabTask extends AsyncTask<String, Integer, Integer
                     .url(httpUrl1)
                     .build();
 
-            try {
-                Response response = client.newCall(priceRequest1).execute();
+            try (Response response = client.newCall(priceRequest1).execute()) {
                 String responseData = response.body().string();
 
                 JSONObject jsonObject = new JSONObject(responseData);

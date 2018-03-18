@@ -3,16 +3,19 @@ package me.dounx.nintendoeshophelper;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.StrictMode;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Toast;
 
 import java.util.List;
@@ -62,10 +65,14 @@ public class MainActivity extends AppCompatActivity {
         RecyclerView recyclerView = findViewById(R.id.recycler_view);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
-        GameAdapter adapter = new GameAdapter(games);
+        recyclerView.addItemDecoration(new DividerItemDecoration(recyclerView.getContext(), layoutManager.getOrientation()));
+        GameAdapter adapter = new GameAdapter(this, games);
         recyclerView.setAdapter(adapter);
 
 
+        /**
+         *  Below here is test code
+         */
         final Toast successToast = Toast.makeText(this, "Grab success!", Toast.LENGTH_SHORT);
         final Toast failToast = Toast.makeText(this, "Grab fail!", Toast.LENGTH_SHORT);
 
@@ -82,16 +89,33 @@ public class MainActivity extends AppCompatActivity {
             }
         };
 
-        /*
-        USGameGrabTask usGameGrabTask = new USGameGrabTask(this, mListener);
-        EUGameGrabTask euGameGrabTask = new EUGameGrabTask(this, mListener);
-        JPGameGrabTask jpGameGrabTask = new JPGameGrabTask(this, mListener);
-        SupportedCountryGrabTask supportCountryGrabTask = new SupportedCountryGrabTask(this, mListener);
+        DownloadListener finishListener = new DownloadListener() {
+            @Override
+            public void onSuccess() {
+                finish();
+            }
 
-        usGameGrabTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-        euGameGrabTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-        jpGameGrabTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-        supportCountryGrabTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+            @Override
+            public void onFailed() {
+
+            }
+        };
+
+        final USGameGrabTask usGameGrabTask = new USGameGrabTask(this, mListener);
+        final EUGameGrabTask euGameGrabTask = new EUGameGrabTask(this, mListener);
+        final JPGameGrabTask jpGameGrabTask = new JPGameGrabTask(this, mListener);
+        final SupportedCountryGrabTask supportCountryGrabTask = new SupportedCountryGrabTask(this, finishListener);
+
+        FloatingActionButton fab = findViewById(R.id.fab);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                usGameGrabTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+                euGameGrabTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+                jpGameGrabTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+                supportCountryGrabTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+            }
+        });
 
         String countryCode;
         if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
@@ -99,6 +123,7 @@ public class MainActivity extends AppCompatActivity {
         } else {
             countryCode = this.getResources().getConfiguration().locale.getCountry();
         }
+
         Log.d("SupportedCountry", countryCode);
 
         Game game = new Game();
@@ -108,7 +133,6 @@ public class MainActivity extends AppCompatActivity {
 
         //PriceQueryTask priceQueryTask = new PriceQueryTask(getApplicationContext(), mListener, game);
         //priceQueryTask.execute();
-        */
 
     }
 

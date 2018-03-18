@@ -118,7 +118,7 @@ public class GameBaseHelper extends SQLiteOpenHelper {
         );
 
         sqLiteDatabase.execSQL("CREATE VIEW Game AS  " +
-                "SELECT USGame.title as us_title, EUGame.title as eu_title, JPGame.title_name as jp_title,USGame.game_code, EUGame.language_availability as language, USGame.nsuid as us_nsuid, EUGame.nsuid_txt as eu_nsuid, JPGame.nsuid as jp_nsuid, EUGame.price_has_discount_b as discount, USGame.front_box_art as icon_url, USGame.slug as url, USGame.release_date, USGame.number_of_players as player_number, USGame.category " +
+                "SELECT USGame.title as us_title, EUGame.title as eu_title, JPGame.title_name as jp_title,USGame.game_code, EUGame.language_availability as language, USGame.nsuid as us_nsuid, EUGame.nsuid_txt as eu_nsuid, JPGame.nsuid as jp_nsuid, EUGame.price_has_discount_b as discount, EUGame.image_url_h2x1_s as icon_url, USGame.slug as url, USGame.release_date, USGame.number_of_players as player_number, USGame.category " +
                 "FROM USGame left outer join EUGame on USGame.game_code = EUGame.product_code_txt left outer join JPGame on game_code = initial_code"
         );
     }

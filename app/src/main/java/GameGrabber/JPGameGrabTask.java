@@ -47,8 +47,7 @@ public class JPGameGrabTask extends AsyncTask<String, Integer, Integer> {
         Request request = new Request.Builder()
                 .url("https://www.nintendo.co.jp/data/software/xml/switch.xml")
                 .build();
-        try {
-            Response response = client.newCall(request).execute();
+        try (Response response = client.newCall(request).execute()) {
             String responseData = response.body().string();
             parseXMLWithPullAndAddToDb(responseData);
         } catch (Exception e) {

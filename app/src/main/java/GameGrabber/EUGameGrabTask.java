@@ -63,8 +63,7 @@ public class EUGameGrabTask  extends AsyncTask<String, Integer, Integer>  {
                 .url(httpUrl)
                 .build();
 
-        try {
-            Response response = client.newCall(request).execute();
+        try (Response response = client.newCall(request).execute()) {
             String responseData = response.body().string();
             parseJsonWithJSONObjectAndAddToDB(responseData);
         } catch (Exception e) {
@@ -135,7 +134,10 @@ public class EUGameGrabTask  extends AsyncTask<String, Integer, Integer>  {
                     euGame.setPriority(gameObject.getString("priority"));
                 }
                 euGame.setDigitalVersionB(gameObject.getBoolean("digital_version_b"));
-                euGame.setImageUrlH2x1S(gameObject.getString("image_url_h2x1_s"));
+
+                // Add "https:" head
+                euGame.setImageUrlH2x1S("https:" + gameObject.getString("image_url_h2x1_s"));
+
                 euGame.setAgeRatingSortingI(gameObject.getString("age_rating_sorting_i"));
                 if (gameObject.has("play_mode_tabletop_mode_b")) {
                     euGame.setPlayModeTabletopModeB(gameObject.getBoolean("play_mode_tabletop_mode_b"));

@@ -2,6 +2,7 @@ package GameGrabber;
 
 import android.content.Context;
 import android.os.AsyncTask;
+import android.support.v7.widget.RecyclerView.ViewHolder;
 import android.util.Log;
 
 import org.json.JSONArray;
@@ -13,7 +14,9 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
+import me.dounx.nintendoeshophelper.GameAdapter;
 import okhttp3.HttpUrl;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -26,19 +29,24 @@ import okhttp3.Response;
  * Game's nsuid represent a game
  */
 public class PriceQueryTask extends AsyncTask<String, Integer, Price> {
-
-    private final DownloadListener mListener;
-    private final Context mContext;
     private final SupportedCountryLab mSupportedCountryLab;
+    private final Context mContext;
     private final GameLab mGameLab;
-    private final Game mGame;
+    private final GameAdapter mGameAdapter;
+    private final List<Game> mGames;
+    private final int mPosition;
+    private Game mGame;
+    private DownloadListener mListener;
 
-    public PriceQueryTask(Context context, DownloadListener listener, Game game) {
-        this.mListener = listener;
+    public PriceQueryTask(Context context, DownloadListener listener, GameAdapter gameAdapter, List<Game> games, int position) {
         this.mContext = context;
-        this.mSupportedCountryLab = SupportedCountryLab.get(mContext);
         this.mGameLab = GameLab.get(mContext);
-        this.mGame = game;
+        this.mSupportedCountryLab = SupportedCountryLab.get(mContext);
+        this.mGameAdapter = gameAdapter;
+        this.mGames = games;
+        this.mPosition = position;
+        mGame = games.get(position);
+        mListener = listener;
     }
 
     @Override
@@ -109,7 +117,7 @@ public class PriceQueryTask extends AsyncTask<String, Integer, Price> {
 
             // calculate price
             double basePrice = Double.parseDouble(price.getPrice()) / rates;
-            price.setPrice(String.valueOf(basePrice));
+            price.setPrice(String.valueOf(String.format("%.2f", basePrice)));  // Round it to 2 decimal places
         }
 
         // Sort list
@@ -132,9 +140,14 @@ public class PriceQueryTask extends AsyncTask<String, Integer, Price> {
         return price;
     }
 
+    @Override
+    protected void onPostExecute(Price price) {
+        mGames.get(mPosition).setPrice(price);
+        mGameAdapter.notifyItemChanged(mPosition);
+        mListener.onSuccess();
+    }
     private Price queryPrice(String countryCode, String nsuid) {
         OkHttpClient client = new OkHttpClient();
-        client.retryOnConnectionFailure();
 
         Price parseData = null;
 
@@ -152,8 +165,7 @@ public class PriceQueryTask extends AsyncTask<String, Integer, Price> {
                 .url(httpUrl)
                 .build();
 
-        try {
-            Response response = client.newCall(request).execute();
+        try (Response response = client.newCall(request).execute()){
             String responseData = response.body().string();
             parseData = parsePriceJsonData(responseData);
         } catch (Exception e) {
@@ -177,8 +189,7 @@ public class PriceQueryTask extends AsyncTask<String, Integer, Price> {
                 .url(httpUrl)
                 .build();
 
-        try {
-            Response response = client.newCall(request).execute();
+        try (Response response = client.newCall(request).execute()) {
             String responseData = response.body().string();
             ratesMap = parseRatesJsonData(responseData);
         } catch (Exception e) {
