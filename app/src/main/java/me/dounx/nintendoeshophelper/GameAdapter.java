@@ -9,6 +9,8 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+
 import java.util.List;
 
 import GameGrabber.DownloadListener;
@@ -19,25 +21,20 @@ import Util.GlideApp;
 public class GameAdapter extends RecyclerView.Adapter<GameAdapter.ViewHolder> {
     private List<Game> mGameList;
     private Context mContext;
-    private int mPass = 0;
-    private int mTaskCount = 0;
-    private static final int LIMIT = 3;
     private DownloadListener mListener = new DownloadListener() {
         @Override
         public void onSuccess() {
-            mTaskCount--;
         }
 
         @Override
         public void onFailed() {
-            mTaskCount--;
         }
     };
 
     static class ViewHolder extends RecyclerView.ViewHolder {
         ImageView gameImage;
         TextView gameName;
-        TextView gamePrice;
+        TextView gameReleaseDate;
         TextView gameCategory;
 
 
@@ -45,7 +42,7 @@ public class GameAdapter extends RecyclerView.Adapter<GameAdapter.ViewHolder> {
             super(view);
             gameImage = view.findViewById(R.id.game_image);
             gameName = view.findViewById(R.id.game_name);
-            gamePrice = view.findViewById(R.id.game_price);
+            gameReleaseDate = view.findViewById(R.id.game_release_date);
             gameCategory = view.findViewById(R.id.game_category);
         }
     }
@@ -68,21 +65,13 @@ public class GameAdapter extends RecyclerView.Adapter<GameAdapter.ViewHolder> {
         Game game = mGameList.get(position);
 
         holder.gameName.setText(game.getUsTitle());
+        holder.gameReleaseDate.setText(game.getReleaseDate());
         holder.gameCategory.setText(game.getCategory());
-
-        if (position > mPass && mTaskCount < LIMIT){
-            PriceQueryTask priceQueryTask = new PriceQueryTask(mContext, mListener, this, mGameList, position);
-            priceQueryTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-            mPass = position;
-            mTaskCount++;
-        }
-
-        if (game.getPrice() != null) {
-            holder.gamePrice.setText(game.getPrice().getPrice() + "CNY" + " (" + game.getPrice().getCountryName() + ")");  // Use CNY to test it
-        }
-
         GlideApp.with(mContext)
                 .load(game.getIconUrl())
+                .error(R.drawable.ic_no_pic)
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .placeholder(R.drawable.ic_loading)
                 .into(holder.gameImage);
     }
 

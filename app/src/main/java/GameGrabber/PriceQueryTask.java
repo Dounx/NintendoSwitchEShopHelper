@@ -2,7 +2,6 @@ package GameGrabber;
 
 import android.content.Context;
 import android.os.AsyncTask;
-import android.support.v7.widget.RecyclerView.ViewHolder;
 import android.util.Log;
 
 import org.json.JSONArray;
@@ -14,7 +13,6 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 import me.dounx.nintendoeshophelper.GameAdapter;
 import okhttp3.HttpUrl;
@@ -108,7 +106,7 @@ public class PriceQueryTask extends AsyncTask<String, Integer, Price> {
 
         //// Get the current rates, and save it until app is destroy
         if (ratesMap == null) {
-           ratesMap = queryRates("CNY");
+           // ratesMap = queryRates("CNY");
             mGameLab.RatesMap = ratesMap;
         }
 
@@ -174,31 +172,6 @@ public class PriceQueryTask extends AsyncTask<String, Integer, Price> {
         return parseData;
     }
 
-    private HashMap<String, Double> queryRates(String base) {
-        HashMap<String, Double> ratesMap = null;
-        OkHttpClient client = new OkHttpClient();
-
-        HttpUrl httpUrl = new HttpUrl.Builder()
-                .scheme("https")
-                .host("api.fixer.io")
-                .addPathSegment("latest")
-                .addQueryParameter("base", base)
-                .build();
-
-        Request request = new Request.Builder()
-                .url(httpUrl)
-                .build();
-
-        try (Response response = client.newCall(request).execute()) {
-            String responseData = response.body().string();
-            ratesMap = parseRatesJsonData(responseData);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        return ratesMap;
-    }
-
     private Price parsePriceJsonData(String jsonData) {
         Price price = new Price();
         try {
@@ -220,25 +193,5 @@ public class PriceQueryTask extends AsyncTask<String, Integer, Price> {
             Log.d("Wrong data", jsonData);
         }
         return price;
-    }
-
-    private HashMap<String, Double> parseRatesJsonData(String jsonData) {
-        HashMap<String, Double> ratesMap = new HashMap<>();
-        try {
-            JSONObject jsonObject = new JSONObject(jsonData);
-            JSONObject ratesObject = jsonObject.getJSONObject("rates");
-
-            //// Parse JSONObject to map
-            Iterator<String> keys = ratesObject.keys();
-            while(keys.hasNext()) {
-                String key = keys.next();
-                Double value = (Double)ratesObject.get(key);
-                ratesMap.put(key, value);
-            }
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return ratesMap;
     }
 }

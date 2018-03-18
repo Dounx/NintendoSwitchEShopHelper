@@ -35,10 +35,9 @@
             android:paddingBottom="16dp" />
 
         <TextView
-            android:id="@+id/game_price"
+            android:id="@+id/game_release_date"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="@string/loading"
             android:textSize="14sp" />
 
         <TextView

@@ -48,7 +48,7 @@ public class EUGameGrabTask  extends AsyncTask<String, Integer, Integer>  {
         //// We can grab all the games info with a request
         HttpUrl httpUrl = new HttpUrl.Builder()
                 .scheme("https")
-                .host("search.nintendo-europe.com")
+                .host("search_view.nintendo-europe.com")
                 .addPathSegment(LOCALE)
                 .addPathSegment("select")
                 .addQueryParameter("fq", "type:GAME AND system_type:nintendoswitch* AND product_code_txt:*")

@@ -190,7 +190,6 @@ public class USGameGrabTask extends AsyncTask<String, Integer, Integer> {
     }
 
     private static ContentValues getContentValues(USGame usGame) {
-
         ContentValues values = new ContentValues();
         values.put(USGameTable.Cols.NSUID, usGame.getNsUid());
         values.put(USGameTable.Cols.CATEGORY, usGame.getCategory());
@@ -215,10 +214,10 @@ public class USGameGrabTask extends AsyncTask<String, Integer, Integer> {
 
     /**
      * Parse Game Code
-     * @param gameCode A complete game code, but we need just 4-digit ( For linking USGame, EUGame and JPGame table )
+     * @param gameCode A complete 9 game code ( special like HAC is 3 digit-code ), but we need just 4-digit ( For linking USGame, EUGame and JPGame table )
      * @return Parsed 4-digit game code
      */
     private String parseGameCode(String gameCode) {
-        return gameCode.length() == 9? gameCode.substring(4, 8): null;
+        return gameCode.length() > 3? gameCode.substring(4, 8): null;    // 3 digit-code because of code HAC ( Just HAC! )
     }
 }
