@@ -11,7 +11,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 
 import me.dounx.nintendoeshophelper.GameAdapter;
@@ -26,30 +25,27 @@ import okhttp3.Response;
  * Nintendo's API can only return a game with a country one time ( Or a country with 50 games )
  * Game's nsuid represent a game
  */
-public class PriceQueryTask extends AsyncTask<String, Integer, Price> {
+public class PriceQueryTask extends AsyncTask<Game, Integer, Integer> {
+    private static final int TYPE_SUCCESS = 0;
+    private static final int TYPE_FAILED = 1;
+
     private final SupportedCountryLab mSupportedCountryLab;
     private final Context mContext;
     private final GameLab mGameLab;
-    private final GameAdapter mGameAdapter;
-    private final List<Game> mGames;
-    private final int mPosition;
     private Game mGame;
     private DownloadListener mListener;
 
-    public PriceQueryTask(Context context, DownloadListener listener, GameAdapter gameAdapter, List<Game> games, int position) {
+    public PriceQueryTask(Context context, DownloadListener listener) {
         this.mContext = context;
         this.mGameLab = GameLab.get(mContext);
         this.mSupportedCountryLab = SupportedCountryLab.get(mContext);
-        this.mGameAdapter = gameAdapter;
-        this.mGames = games;
-        this.mPosition = position;
-        mGame = games.get(position);
         mListener = listener;
     }
 
     @Override
-    protected Price doInBackground(String... params) {
-        HashMap<String, Double> ratesMap = mGameLab.RatesMap;
+    protected Integer doInBackground(Game... params) {
+        mGame = params[0];
+        HashMap<String, Double> ratesMap = mGameLab.mRatesMap;
         List<SupportedCountry> supportedCountryList = mSupportedCountryLab.getSupportedCountries();
 
         List<SupportedCountry> usCountryList = new ArrayList<>();
@@ -74,41 +70,28 @@ public class PriceQueryTask extends AsyncTask<String, Integer, Price> {
         String euNsuid = mGame.getEuNsUid();
         String jpNsuid = mGame.getJpNsUid();
 
-        List<Price> priceList = new ArrayList<>();
+        List<HttpUrl> httpUrls = new ArrayList<>();
 
         if (usNsuid != null) {
             for (SupportedCountry country : usCountryList) {
-                Price price = queryPrice(country.getCode(), usNsuid);
-                if (price == null) {
-                    return null;
-                }
-                priceList.add(price);
+                HttpUrl url = buildHttpUrl(country.getCode(), usNsuid);
+                httpUrls.add(url);
             }
         }
         if (euNsuid != null) {
             for (SupportedCountry country : euCountryList) {
-                Price price = queryPrice(country.getCode(), euNsuid);
-                if (price == null) {
-                    return null;
-                }
-                priceList.add(price);
+                HttpUrl url = buildHttpUrl(country.getCode(), euNsuid);
+                httpUrls.add(url);
             }
         }
         if (jpNsuid != null) {
             for (SupportedCountry country : jpCountryList) {
-                Price price = queryPrice(country.getCode(), jpNsuid);
-                if (price == null) {
-                    return null;
-                }
-                priceList.add(price);
+                HttpUrl url = buildHttpUrl(country.getCode(), jpNsuid);
+                httpUrls.add(url);
             }
         }
 
-        //// Get the current rates, and save it until app is destroy
-        if (ratesMap == null) {
-           // ratesMap = queryRates("CNY");
-            mGameLab.RatesMap = ratesMap;
-        }
+        List<Price> priceList = queryPrice(httpUrls);
 
         for (Price price : priceList) {
             double rates = ratesMap.get(price.getCurrency());
@@ -134,21 +117,39 @@ public class PriceQueryTask extends AsyncTask<String, Integer, Price> {
         price.setCountryCode(priceList.get(0).getCountryCode());
         price.setCountryName(mSupportedCountryLab.getCountryName(priceList.get(0).getCountryCode()));
         price.setCurrency(priceList.get(0).getCurrency());
-
-        return price;
+        mGame.setPrice(price);
+        return TYPE_SUCCESS;
     }
 
     @Override
-    protected void onPostExecute(Price price) {
-        mGames.get(mPosition).setPrice(price);
-        mGameAdapter.notifyItemChanged(mPosition);
-        mListener.onSuccess();
+    protected void onPostExecute(Integer integer) {
+        if (integer == TYPE_SUCCESS) {
+            mListener.onSuccess();
+        } else {
+            mListener.onFailed();
+        }
     }
-    private Price queryPrice(String countryCode, String nsuid) {
+    private List<Price> queryPrice(List<HttpUrl> httpUrls) {
         OkHttpClient client = new OkHttpClient();
+        List<Price> priceList = new ArrayList<>();
 
-        Price parseData = null;
+        for (HttpUrl url : httpUrls) {
+            Price parseData;
+            Request request = new Request.Builder()
+                    .url(url)
+                    .build();
+            try (Response response = client.newCall(request).execute()){
+                String responseData = response.body().string();
+                parseData = parsePriceJsonData(responseData);
+                priceList.add(parseData);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        return priceList;
+    }
 
+    private HttpUrl buildHttpUrl(String countryCode, String nsuid) {
         HttpUrl httpUrl = new HttpUrl.Builder()
                 .scheme("https")
                 .host("api.ec.nintendo.com")
@@ -158,18 +159,7 @@ public class PriceQueryTask extends AsyncTask<String, Integer, Price> {
                 .addQueryParameter("lang", "en")
                 .addQueryParameter("ids", nsuid)
                 .build();
-
-        Request request = new Request.Builder()
-                .url(httpUrl)
-                .build();
-
-        try (Response response = client.newCall(request).execute()){
-            String responseData = response.body().string();
-            parseData = parsePriceJsonData(responseData);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return parseData;
+        return httpUrl;
     }
 
     private Price parsePriceJsonData(String jsonData) {

@@ -19,13 +19,13 @@ import okhttp3.Response;
 
 public class RatesQueryTask extends AsyncTask<String, Integer, Integer> {
     private Context mContext;
-    private ResponseListener mResponseListener;
+    private DownloadListener mListener;
     private static final int TYPE_SUCCESS = 0;
     private static final int TYPE_FAILED = 1;
 
-    public RatesQueryTask(Context context, ResponseListener listener) {
+    public RatesQueryTask(Context context, DownloadListener listener) {
         mContext = context;
-        mResponseListener = listener;
+        mListener = listener;
     }
 
     @Override
@@ -33,10 +33,21 @@ public class RatesQueryTask extends AsyncTask<String, Integer, Integer> {
         HashMap ratesMap = queryRates(params[0]);    // Params[0] is base currency
 
         if (ratesMap != null) {
-            mResponseListener.onDataReceivedSuccess(ratesMap);
+            GameLab.get(mContext).mRatesMap = ratesMap;
             return TYPE_SUCCESS;
         }
         return TYPE_FAILED;
+    }
+
+    @Override
+    protected void onPostExecute(Integer integer) {
+        super.onPostExecute(integer);
+
+        if (integer == TYPE_SUCCESS) {
+            mListener.onSuccess();
+        } else {
+            mListener.onFailed();
+        }
     }
 
     private HashMap<String, Double> queryRates(String base) {

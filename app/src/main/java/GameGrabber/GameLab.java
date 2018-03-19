@@ -20,7 +20,7 @@ public class GameLab {
     private static GameLab sGameLab;
     private final Context mContext;
     private final SQLiteDatabase mDatabase;
-    public HashMap<String, Double> RatesMap;
+    public HashMap<String, Double> mRatesMap;
 
     public static GameLab get(Context context) {
         if (sGameLab == null) {
@@ -45,6 +45,13 @@ public class GameLab {
             }
         }
         return games;
+    }
+
+    public Game getGame(String gameCode) {
+        try (GameCursorWrapper cursor = queryGames("game_code = ?", new String[]{gameCode})) {
+            cursor.moveToFirst();
+            return cursor.getGame();
+        }
     }
 
     // Close the database connection

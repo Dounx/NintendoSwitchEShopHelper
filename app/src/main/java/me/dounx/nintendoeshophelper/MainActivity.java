@@ -1,14 +1,17 @@
 package me.dounx.nintendoeshophelper;
 
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.StrictMode;
 import android.preference.PreferenceManager;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -22,6 +25,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.ListPreloader;
@@ -38,16 +42,23 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import GameGrabber.DownloadListener;
+import GameGrabber.EUGameGrabTask;
 import GameGrabber.Game;
 import GameGrabber.GameLab;
-import Util.GlideApp;
+import GameGrabber.JPGameGrabTask;
+import GameGrabber.RatesQueryTask;
+import GameGrabber.USGameGrabTask;
+import Util.QueryPreferences;
 
 public class MainActivity extends AppCompatActivity {
     private static boolean STRICT_MODE = false;
 
+    private Context mContext;
     private DrawerLayout mDrawerLayout;
     private List<Game> mGames;
-    private GameAdapter mAdapter;
+    private SwipeRefreshLayout mSwipeRefreshLayout;
+    private RecyclerView mRecyclerView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,8 +90,20 @@ public class MainActivity extends AppCompatActivity {
             prefs.edit().putInt("version", currentVersion).commit();
         }
 
+        DownloadListener listener = new DownloadListener() {
+            @Override
+            public void onSuccess() { }
+            @Override
+            public void onFailed() { }
+        };
+        RatesQueryTask ratesQueryTask = new RatesQueryTask(this, listener);
+        ratesQueryTask.execute("CNY");
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        mContext = this;
+
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         mDrawerLayout = findViewById(R.id.drawer_layout);
@@ -91,19 +114,28 @@ public class MainActivity extends AppCompatActivity {
             actionBar.setHomeAsUpIndicator(R.drawable.ic_menu);
         }
 
+        mSwipeRefreshLayout = findViewById(R.id.swipe_refresh);
+        mSwipeRefreshLayout.setColorSchemeResources(R.color.colorPrimary);
+        mSwipeRefreshLayout.setProgressViewEndTarget(false, 50);
+        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                refreshData();
+            }
+        });
+
         mGames = GameLab.get(this).getGames();
         ViewPreloadSizeProvider<Game> sizeProvider = new ViewPreloadSizeProvider<>();
         ListPreloader.PreloadModelProvider modelProvider = new MyPreloadModelProvider();
         RecyclerViewPreloader<Game> preLoader = new RecyclerViewPreloader<>(Glide.with(this), modelProvider, sizeProvider, 100);
 
-        RecyclerView recyclerView = findViewById(R.id.recycler_view);
-        recyclerView.addOnScrollListener(preLoader);
+        mRecyclerView = findViewById(R.id.recycler_view);
+        mRecyclerView.addOnScrollListener(preLoader);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
-        recyclerView.setLayoutManager(layoutManager);
-        recyclerView.addItemDecoration(new DividerItemDecoration(recyclerView.getContext(), layoutManager.getOrientation()));
-        mAdapter = new GameAdapter(this, mGames);
-        recyclerView.setAdapter(mAdapter);
-
+        mRecyclerView.setLayoutManager(layoutManager);
+        mRecyclerView.addItemDecoration(new DividerItemDecoration(mRecyclerView.getContext(), layoutManager.getOrientation()));
+        GameAdapter adapter = new GameAdapter(this, mGames);
+        mRecyclerView.setAdapter(adapter);
 
         /**
          *  Below here is test code
@@ -141,24 +173,29 @@ public class MainActivity extends AppCompatActivity {
         getMenuInflater().inflate(R.menu.search_view, menu);
         MenuItem searchItem = menu.findItem(R.id.menu_item_search);
         final SearchView searchView = (SearchView)searchItem.getActionView();
-
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-                List<Game> games = new ArrayList<>();
-                for (Game game : mGames) {
-                    if (game.getUsTitle().contains(query)) {
-                        games.add(game);
-                    }
-                }
-                mGames = games;
-                mAdapter.notifyDataSetChanged();
+                QueryPreferences.setStoredQuery(mContext, query);
+                updateItems();
+                searchView.clearFocus();
                 return true;
             }
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                onQueryTextSubmit(newText);
+                QueryPreferences.setStoredQuery(mContext, newText.equals("")? null : newText);
+                updateItems();
+                return true;
+            }
+        });
+
+        searchView.setOnCloseListener(new SearchView.OnCloseListener() {
+            @Override
+            public boolean onClose() {
+                QueryPreferences.setStoredQuery(mContext, null);
+                updateItems();
+                searchView.onActionViewCollapsed();
                 return true;
             }
         });
@@ -172,6 +209,7 @@ public class MainActivity extends AppCompatActivity {
             case android.R.id.home:
                 mDrawerLayout.openDrawer(GravityCompat.START);
                 break;
+            default:
         }
         return true;
     }
@@ -188,9 +226,71 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public RequestBuilder getPreloadRequestBuilder(Object item) {
-            return GlideApp.with(getApplication())
+            return GlideApp.with(mContext)
                             .load((String) item);
         }
+    }
+
+    private void refreshData() {
+        DownloadListener listener = new DownloadListener() {
+            @Override
+            public void onSuccess() {
+                Toast.makeText(mContext, "Success!", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onFailed() {
+                Toast.makeText(mContext, "Failed!", Toast.LENGTH_SHORT).show();
+            }
+        };
+
+        final USGameGrabTask usGameGrabTask = new USGameGrabTask(mContext, listener);
+        final EUGameGrabTask euGameGrabTask = new EUGameGrabTask(mContext, listener);
+        final JPGameGrabTask jpGameGrabTask = new JPGameGrabTask(mContext, listener);
+        final RatesQueryTask ratesQueryTask = new RatesQueryTask(mContext, listener);
+
+        usGameGrabTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+        euGameGrabTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+        jpGameGrabTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+        ratesQueryTask.execute("CNY");
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                while (usGameGrabTask.getStatus() != AsyncTask.Status.FINISHED ||
+                        euGameGrabTask.getStatus() != AsyncTask.Status.FINISHED ||
+                        jpGameGrabTask.getStatus() != AsyncTask.Status.FINISHED ||
+                        ratesQueryTask.getStatus() != AsyncTask.Status.FINISHED) {
+
+                }
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        List<Game> games = GameLab.get(mContext).getGames();
+                        GameAdapter adapter = new GameAdapter(mContext, games);
+                        mRecyclerView.setAdapter(adapter);
+                        mSwipeRefreshLayout.setRefreshing(false);
+                    }
+                });
+            }
+        }).start();
+    }
+
+    private void updateItems() {
+        String query = QueryPreferences.getStoredQuery(mContext);
+        List<Game> games;
+        if (query == null) {
+            games = GameLab.get(mContext).getGames();
+        } else {
+            games = new ArrayList<>();
+            for (Game game : mGames) {
+                if (game.getUsTitle().toLowerCase().contains(query.toLowerCase())) {
+                    games.add(game);
+                }
+            }
+        }
+        GameAdapter adapter = new GameAdapter(mContext, games);
+        mRecyclerView.setAdapter(adapter);
     }
 
     public String  CopySqliteFileFromRawToDatabases(String SqliteFileName) throws IOException {
