@@ -40,7 +40,7 @@ public class GameAdapter extends RecyclerView.Adapter<GameAdapter.ViewHolder> {
         @Override
         public void onClick(View view) {
             Game game = mGameList.get((int)view.getTag());
-            Intent intent = GamePageActivity.newIntent(mContext, game.getGameCode());
+            Intent intent = GamePageActivity.newIntent(mContext, game.getUsTitle());
             mContext.startActivity(intent);
         }
     }

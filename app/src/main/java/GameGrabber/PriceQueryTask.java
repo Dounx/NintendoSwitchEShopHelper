@@ -45,6 +45,9 @@ public class PriceQueryTask extends AsyncTask<Game, Integer, Integer> {
     @Override
     protected Integer doInBackground(Game... params) {
         mGame = params[0];
+        if (mGame.getGameCode() == null) {
+            return TYPE_FAILED;
+        }
         HashMap<String, Double> ratesMap = mGameLab.mRatesMap;
         List<SupportedCountry> supportedCountryList = mSupportedCountryLab.getSupportedCountries();
 

@@ -23,7 +23,7 @@ public class GameCursorWrapper extends CursorWrapper {
         String jp_nsuid = getString(getColumnIndex(GameView.Cols.JP_NSUID));
         String discount = getString(getColumnIndex(GameView.Cols.DISCOUNT));
         String icon_url = getString(getColumnIndex(GameView.Cols.ICON_URL));
-        String url = getString(getColumnIndex(GameView.Cols.URL));
+        String url = "https://www.nintendo.com/games/detail/" + getString(getColumnIndex(GameView.Cols.URL));
         String release_date = getString(getColumnIndex(GameView.Cols.RELEASE_DATE));
         String player_number = getString(getColumnIndex(GameView.Cols.PLAYER_NUMBER));
         String category = getString(getColumnIndex(GameView.Cols.CATEGORY));

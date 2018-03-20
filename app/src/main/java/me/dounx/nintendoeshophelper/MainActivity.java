@@ -8,7 +8,9 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.StrictMode;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -59,6 +61,8 @@ public class MainActivity extends AppCompatActivity {
     private List<Game> mGames;
     private SwipeRefreshLayout mSwipeRefreshLayout;
     private RecyclerView mRecyclerView;
+    private LinearLayoutManager mLayoutManager;
+    private FloatingActionButton mFab;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -104,9 +108,43 @@ public class MainActivity extends AppCompatActivity {
 
         mContext = this;
 
-        Toolbar toolbar = findViewById(R.id.toolbar);
+         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
         mDrawerLayout = findViewById(R.id.drawer_layout);
+        NavigationView navigationView =findViewById(R.id.nav_view);
+        navigationView.setCheckedItem(R.id.nav_game_all);
+        navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(MenuItem item) {
+                switch (item.getItemId()) {
+                    case R.id.nav_game_all:
+                        QueryPreferences.setStoredQuery(mContext, null);
+                        updateItems();
+                        getSupportActionBar().setTitle(R.string.nav_all_games);
+                        mDrawerLayout.closeDrawers();
+                        break;
+                    case R.id.nav_game_new:
+                        GameAdapter newGameAdapter = new GameAdapter(mContext, GameLab.get(mContext).getNewGames());
+                        mRecyclerView.setAdapter(newGameAdapter);
+                        getSupportActionBar().setTitle(R.string.nav_not_released_games);
+                        mDrawerLayout.closeDrawers();
+                        break;
+                    case R.id.nav_game_discount:
+                        GameAdapter discountGameAdapter = new GameAdapter(mContext, GameLab.get(mContext).getDiscountGames());
+                        mRecyclerView.setAdapter(discountGameAdapter);
+                        getSupportActionBar().setTitle(R.string.nav_discount_games);
+                        mDrawerLayout.closeDrawers();
+                        break;
+                    case  R.id.nav_settings:
+                        getSupportActionBar().setTitle(R.string.nav_settings);
+                        mDrawerLayout.closeDrawers();
+                        break;
+                    default:
+                }
+                return true;
+            }
+        });
 
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
@@ -116,7 +154,7 @@ public class MainActivity extends AppCompatActivity {
 
         mSwipeRefreshLayout = findViewById(R.id.swipe_refresh);
         mSwipeRefreshLayout.setColorSchemeResources(R.color.colorPrimary);
-        mSwipeRefreshLayout.setProgressViewEndTarget(false, 50);
+        mSwipeRefreshLayout.setProgressViewEndTarget(false, 200);
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
@@ -127,27 +165,42 @@ public class MainActivity extends AppCompatActivity {
         mGames = GameLab.get(this).getGames();
         ViewPreloadSizeProvider<Game> sizeProvider = new ViewPreloadSizeProvider<>();
         ListPreloader.PreloadModelProvider modelProvider = new MyPreloadModelProvider();
-        RecyclerViewPreloader<Game> preLoader = new RecyclerViewPreloader<>(Glide.with(this), modelProvider, sizeProvider, 100);
+        RecyclerViewPreloader<Game> preLoader = new RecyclerViewPreloader<>(Glide.with(this), modelProvider, sizeProvider, 20);
 
         mRecyclerView = findViewById(R.id.recycler_view);
         mRecyclerView.addOnScrollListener(preLoader);
-        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
-        mRecyclerView.setLayoutManager(layoutManager);
-        mRecyclerView.addItemDecoration(new DividerItemDecoration(mRecyclerView.getContext(), layoutManager.getOrientation()));
+        mLayoutManager = new LinearLayoutManager(this);
+        mRecyclerView.setLayoutManager(mLayoutManager);
+        mRecyclerView.addItemDecoration(new DividerItemDecoration(mRecyclerView.getContext(), mLayoutManager.getOrientation()));
         GameAdapter adapter = new GameAdapter(this, mGames);
         mRecyclerView.setAdapter(adapter);
+        mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+
+                if (dy > 0) {
+                    if (mFab.getVisibility() == View.INVISIBLE) {
+                        mFab.setVisibility(View.VISIBLE);
+                    }
+                } else {
+                    if (mLayoutManager.findFirstVisibleItemPosition()  == 0) {
+                        mFab.setVisibility(View.INVISIBLE);
+                    }
+                }
+            }
+        });
 
         /**
          *  Below here is test code
          */
-        FloatingActionButton fab = findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
+        mFab = findViewById(R.id.fab);
+        mFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                mRecyclerView.scrollToPosition(0);
             }
         });
-        fab.setVisibility(View.INVISIBLE);
 
         String countryCode;
         if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
@@ -157,15 +210,6 @@ public class MainActivity extends AppCompatActivity {
         }
 
         Log.d("SupportedCountry", countryCode);
-
-        Game game = new Game();
-        game.setUsNsUid("70010000000141");
-        game.setEuNsUid("70010000000024");
-        game.setJpNsUid("70010000000027");
-
-        //PriceQueryTask priceQueryTask = new PriceQueryTask(getApplicationContext(), mListener, game);
-        //priceQueryTask.execute();
-
     }
 
     @Override
@@ -216,6 +260,7 @@ public class MainActivity extends AppCompatActivity {
 
     private class MyPreloadModelProvider implements ListPreloader.PreloadModelProvider {
         @Override
+        @NonNull
         public List<String> getPreloadItems(int position) {
             String url = mGames.get(position).getIconUrl();
             if (TextUtils.isEmpty(url)) {
@@ -225,6 +270,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         @Override
+        @NonNull
         public RequestBuilder getPreloadRequestBuilder(Object item) {
             return GlideApp.with(mContext)
                             .load((String) item);

@@ -4,4 +4,8 @@
     <string name="mail">imdounx@gmail.com</string>
     <string name="username">Dounx</string>
     <string name="search">Search</string>
+    <string name="nav_all_games">All Games</string>
+    <string name="nav_not_released_games">Not Released Games</string>
+    <string name="nav_discount_games">Discount Games</string>
+    <string name="all_games">All Games</string>
 </resources>

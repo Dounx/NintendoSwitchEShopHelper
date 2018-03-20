@@ -2,8 +2,20 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <group android:checkableBehavior="single">
         <item
+            android:id="@+id/nav_game_all"
+            android:icon="@drawable/nav_settings"
+            android:title="@string/nav_all_games"/>
+        <item
+            android:id="@+id/nav_game_new"
+            android:icon="@drawable/nav_settings"
+            android:title="@string/nav_not_released_games"/>
+        <item
+            android:id="@+id/nav_game_discount"
+            android:icon="@drawable/nav_settings"
+            android:title="@string/nav_discount_games"/>
+        <item
             android:id="@+id/nav_settings"
             android:icon="@drawable/nav_settings"
-            android:title="@string/app_name"/>
+            android:title="@string/nav_settings"/>
     </group>
 </menu>
