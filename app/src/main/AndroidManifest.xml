@@ -21,9 +21,10 @@
         </activity>
 
         <activity android:name=".GamePageActivity"
-            android:screenOrientation="portrait">
-
+            android:screenOrientation="portrait"
+            android:parentActivityName=".MainActivity">
         </activity>
+        
     </application>
 
 </manifest>

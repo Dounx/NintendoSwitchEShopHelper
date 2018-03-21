@@ -42,6 +42,7 @@ public class GamePageActivity extends AppCompatActivity {
 
         Toolbar toolbar = findViewById(R.id.game_page_toolbar);
         setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         mGame = GameLab.get(this).getGame(title);
 
@@ -100,12 +101,8 @@ public class GamePageActivity extends AppCompatActivity {
             }
         };
 
-        if (mGame.getPrice() == null) {
-            mPriceQueryTask = new PriceQueryTask(this, listener, progressBar, progress_info);
-            mPriceQueryTask.execute(mGame);
-        } else {
-            gamePagePrice.setText(mGame.getPrice().getPrice() + " CNY ");
-        }
+        mPriceQueryTask = new PriceQueryTask(this, listener, progressBar, progress_info);
+        mPriceQueryTask.execute(mGame);
     }
 
     @Override

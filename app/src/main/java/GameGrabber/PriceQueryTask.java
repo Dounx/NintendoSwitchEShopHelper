@@ -129,6 +129,10 @@ public class PriceQueryTask extends AsyncTask<Game, Integer, Integer> {
         // Log.d("Price", "Lowest Price: " + priceList.get(0).getPrice());
         // Log.d("Price", "Lowest Country: " + mSupportedCountryLab.getCountryName(priceList.get(0).getCountryCode()));
 
+        if (priceList.size() == 0) {
+            return TYPE_FAILED;
+        }
+
         Price price = new Price();
         price.setPrice(priceList.get(0).getPrice());
         price.setCountryCode(priceList.get(0).getCountryCode());
