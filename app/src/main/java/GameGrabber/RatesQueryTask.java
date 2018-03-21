@@ -19,13 +19,11 @@ import okhttp3.Response;
 
 public class RatesQueryTask extends AsyncTask<String, Integer, Integer> {
     private Context mContext;
-    private DownloadListener mListener;
     private static final int TYPE_SUCCESS = 0;
     private static final int TYPE_FAILED = 1;
 
-    public RatesQueryTask(Context context, DownloadListener listener) {
+    public RatesQueryTask(Context context) {
         mContext = context;
-        mListener = listener;
     }
 
     @Override
@@ -44,9 +42,8 @@ public class RatesQueryTask extends AsyncTask<String, Integer, Integer> {
         super.onPostExecute(integer);
 
         if (integer == TYPE_SUCCESS) {
-            mListener.onSuccess();
+
         } else {
-            mListener.onFailed();
         }
     }
 

@@ -12,6 +12,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 
@@ -51,14 +52,18 @@ public class GameLab {
                 cursor.moveToNext();
             }
         }
+        DealWithSpecialGameData(games);
         return games;
     }
 
     public Game getGame(String title) {
-        try (GameCursorWrapper cursor = queryGames("us_title = ?", new String[]{title})) {
-            cursor.moveToFirst();
-            return cursor.getGame();
+        List<Game> games = getGames();
+        for (Game game : games) {
+            if (game.getUsTitle().equals(title)) {
+                return game;
+            }
         }
+        return null;
     }
 
     public List<Game> getGamesByReleaseDate(final boolean isAsc) {
@@ -120,13 +125,6 @@ public class GameLab {
         return discountGames;
     }
 
-    // Close the database connection
-    public void Clean() {
-        if (mDatabase.isOpen()) {
-            mDatabase.close();
-        }
-    }
-
     private GameCursorWrapper queryGames(String whereClause, String[] whereArgs) {
         Cursor cursor = mDatabase.query(
                 GameView.NAME,
@@ -138,5 +136,24 @@ public class GameLab {
                 null
         );
         return new GameCursorWrapper(cursor);
+    }
+
+    // Special game have multi-version need to deal with
+    private void DealWithSpecialGameData(List<Game> games) {
+        Iterator<Game> iterator = games.iterator();
+
+        while (iterator.hasNext()) {
+            Game game = iterator.next();
+            // NBA 2K18
+            if (game.getGameCode() != null && game.getGameCode().equals("AB38")) {
+                if (game.getUsTitle().equals("NBA 2K18") && game.getJpTitle().equals("NBA 2K18")) {
+                }
+                if (game.getUsTitle().equals("NBA 2K18 Legend Edition") && game.getJpTitle().equals("NBA 2K18 レジェンド エディション")) {
+                }
+                if (game.getUsTitle().equals("NBA 2K18 Legend Edition Gold") && game.getJpTitle().equals("NBA 2K18 レジェンド エディション ゴールド")) {
+                }
+                iterator.remove();
+            }
+        }
     }
 }

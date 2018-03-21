@@ -27,52 +27,162 @@
         android:clickable="true"
         android:src="@drawable/ic_loading" />
 
-    <TextView
-        android:id="@+id/game_page_title"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center"
-        android:textSize="24sp"
-        tools:text="Title" />
+        android:layout_marginTop="16dp">
 
-    <TextView
-        android:id="@+id/game_page_release_date"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:textSize="16sp"
-        tools:text="Release Date" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginRight="8dp"
+            android:textSize="18sp"
+            android:text="@string/category"/>
 
-    <TextView
-        android:id="@+id/game_page_language"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:textSize="16sp"
-        tools:text="Language" />
+        <TextView
+            android:id="@+id/game_page_category"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:textSize="18sp"
+            tools:text="Category" />
+    </LinearLayout>
 
-    <TextView
-        android:id="@+id/game_page_player_number"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center"
-        android:textSize="16sp"
-        tools:text="Player Number" />
+        android:layout_marginTop="16dp">
 
-    <TextView
-        android:id="@+id/game_page_discount"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:textSize="16sp"
-        tools:text="Discount" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginRight="8dp"
+            android:textSize="18sp"
+            android:text="@string/lowest_price"/>
 
-    <TextView
-        android:id="@+id/game_page_price"
+        <TextView
+            android:id="@+id/game_page_price"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:textSize="18sp"
+            android:textColor="@android:color/holo_red_light"
+            android:hint="@string/loading"
+            tools:text="Price" />
+
+        <TextView
+            android:id="@+id/game_page_discount"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="8dp"
+            android:gravity="center_vertical"
+            android:textSize="14sp"
+            android:textColor="@android:color/holo_red_light"
+            tools:text="Discount" />
+
+    </LinearLayout>
+
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center"
-        android:textSize="16sp"
-        tools:text="Price" />
+        android:layout_marginTop="16dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginRight="8dp"
+            android:textSize="18sp"
+            android:text="@string/country"/>
+
+        <TextView
+            android:id="@+id/game_page_country"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:textSize="18sp"
+            android:textColor="@android:color/holo_red_light"
+            android:hint="@string/loading"
+            tools:text="Country" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginRight="8dp"
+            android:textSize="18sp"
+            android:text="@string/language"/>
+
+        <TextView
+            android:id="@+id/game_page_language"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textSize="18sp"
+            tools:text="Language" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginRight="8dp"
+            android:textSize="18sp"
+            android:text="@string/player_number"/>
+
+        <TextView
+            android:id="@+id/game_page_player_number"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textSize="18sp"
+            tools:text="Player Number" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginRight="8dp"
+            android:textSize="18sp"
+            android:text="@string/release_date"/>
+
+        <TextView
+            android:id="@+id/game_page_release_date"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textSize="18sp"
+            tools:text="Release Date" />
+
+    </LinearLayout>
+
+    <ProgressBar
+        android:id="@+id/price_progress_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        style="@style/Widget.AppCompat.ProgressBar.Horizontal"/>
+    
+    <TextView
+        android:id="@+id/progress_info"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:textSize="18sp"
+        android:textColor="@color/colorAccent"/>
 
 </LinearLayout>

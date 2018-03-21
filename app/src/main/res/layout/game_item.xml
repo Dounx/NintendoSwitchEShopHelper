@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="horizontal"
     android:layout_width="match_parent"
     android:layout_height="120dp">
@@ -30,19 +31,32 @@
         <TextView
             android:id="@+id/game_name"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textSize="16sp"
-            android:paddingBottom="16dp" />
+            android:layout_height="0dp"
+            android:layout_weight="4"
+            tools:text="Title"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/game_category"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="4"
+            android:gravity="center_vertical"
+            android:textSize="14sp"
+            tools:text="Category" />
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="0dp"
+            android:layout_weight="3" >
 
             <TextView
                 android:id="@+id/game_release_date"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
+                android:gravity="bottom"
+                tools:text="Release Date"
                 android:textSize="14sp" />
 
             <TextView
@@ -50,16 +64,11 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
+                android:gravity="bottom"
+                tools:text="Discount"
                 android:textSize="14sp" />
 
         </LinearLayout>
-
-        <TextView
-            android:id="@+id/game_category"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textSize="14sp"
-            android:paddingTop="8dp"/>
 
     </LinearLayout>
 

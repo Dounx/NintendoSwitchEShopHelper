@@ -31,12 +31,10 @@ public class EUGameGrabTask  extends AsyncTask<String, Integer, Integer>  {
     private static final String LIMIT = "9999";
     private static final String LOCALE = "en";
 
-    private final DownloadListener mListener;
     private final Context mContext;
     private final SQLiteDatabase mDatabase;
 
-    public EUGameGrabTask(Context context, DownloadListener listener) {
-        this.mListener = listener;
+    public EUGameGrabTask(Context context) {
         this.mContext = context;
         this.mDatabase = new GameBaseHelper(mContext).getWritableDatabase();
     }
@@ -77,10 +75,8 @@ public class EUGameGrabTask  extends AsyncTask<String, Integer, Integer>  {
     protected void onPostExecute(Integer integer) {
         switch (integer) {
             case TYPE_SUCCESS:
-                mListener.onSuccess();
                 break;
             case TYPE_FAILED:
-                mListener.onFailed();
                 break;
             default:
         }

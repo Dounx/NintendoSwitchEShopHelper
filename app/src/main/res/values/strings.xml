@@ -8,4 +8,14 @@
     <string name="nav_not_released_games">Not Released Games</string>
     <string name="nav_discount_games">Discount Games</string>
     <string name="all_games">All Games</string>
+    <string name="update_success">Update Success</string>
+    <string name="category">Category:</string>
+    <string name="lowest_price">Lowest Price:</string>
+    <string name="language">Language:</string>
+    <string name="player_number">Player Number:</string>
+    <string name="release_date">Release Date:</string>
+    <string name="loading">Loading...</string>
+    <string name="country">Country:</string>
+    <string name="failed">Failed!</string>
+    <string name="getting_price_from">Getting Price From</string>
 </resources>

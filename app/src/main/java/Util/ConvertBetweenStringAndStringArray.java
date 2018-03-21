@@ -8,7 +8,7 @@ public class ConvertBetweenStringAndStringArray {
             StringBuilder builder = new StringBuilder();
             for (int i = 0;i < array.length; i++) {
                 builder.append(array[i]);
-                // Do not append comma at the end of last element
+                // Do not append blank space at the end of last element
                 if(i < array.length - 1){
                     builder.append(strSeparator);
                 }

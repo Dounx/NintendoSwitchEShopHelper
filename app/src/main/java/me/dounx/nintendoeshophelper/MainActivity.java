@@ -44,7 +44,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import GameGrabber.DownloadListener;
 import GameGrabber.EUGameGrabTask;
 import GameGrabber.Game;
 import GameGrabber.GameLab;
@@ -94,13 +93,7 @@ public class MainActivity extends AppCompatActivity {
             prefs.edit().putInt("version", currentVersion).commit();
         }
 
-        DownloadListener listener = new DownloadListener() {
-            @Override
-            public void onSuccess() { }
-            @Override
-            public void onFailed() { }
-        };
-        RatesQueryTask ratesQueryTask = new RatesQueryTask(this, listener);
+        RatesQueryTask ratesQueryTask = new RatesQueryTask(this);
         ratesQueryTask.execute("CNY");
 
         super.onCreate(savedInstanceState);
@@ -108,8 +101,9 @@ public class MainActivity extends AppCompatActivity {
 
         mContext = this;
 
-         Toolbar toolbar = findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        getSupportActionBar().setTitle(R.string.all_games);
 
         mDrawerLayout = findViewById(R.id.drawer_layout);
         NavigationView navigationView =findViewById(R.id.nav_view);
@@ -154,6 +148,7 @@ public class MainActivity extends AppCompatActivity {
 
         mSwipeRefreshLayout = findViewById(R.id.swipe_refresh);
         mSwipeRefreshLayout.setColorSchemeResources(R.color.colorPrimary);
+        mSwipeRefreshLayout.setDistanceToTriggerSync(200);
         mSwipeRefreshLayout.setProgressViewEndTarget(false, 200);
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
@@ -165,7 +160,7 @@ public class MainActivity extends AppCompatActivity {
         mGames = GameLab.get(this).getGames();
         ViewPreloadSizeProvider<Game> sizeProvider = new ViewPreloadSizeProvider<>();
         ListPreloader.PreloadModelProvider modelProvider = new MyPreloadModelProvider();
-        RecyclerViewPreloader<Game> preLoader = new RecyclerViewPreloader<>(Glide.with(this), modelProvider, sizeProvider, 20);
+        RecyclerViewPreloader<Game> preLoader = new RecyclerViewPreloader<>(Glide.with(this), modelProvider, sizeProvider, 30);
 
         mRecyclerView = findViewById(R.id.recycler_view);
         mRecyclerView.addOnScrollListener(preLoader);
@@ -278,22 +273,10 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void refreshData() {
-        DownloadListener listener = new DownloadListener() {
-            @Override
-            public void onSuccess() {
-                Toast.makeText(mContext, "Success!", Toast.LENGTH_SHORT).show();
-            }
-
-            @Override
-            public void onFailed() {
-                Toast.makeText(mContext, "Failed!", Toast.LENGTH_SHORT).show();
-            }
-        };
-
-        final USGameGrabTask usGameGrabTask = new USGameGrabTask(mContext, listener);
-        final EUGameGrabTask euGameGrabTask = new EUGameGrabTask(mContext, listener);
-        final JPGameGrabTask jpGameGrabTask = new JPGameGrabTask(mContext, listener);
-        final RatesQueryTask ratesQueryTask = new RatesQueryTask(mContext, listener);
+        final USGameGrabTask usGameGrabTask = new USGameGrabTask(mContext);
+        final EUGameGrabTask euGameGrabTask = new EUGameGrabTask(mContext);
+        final JPGameGrabTask jpGameGrabTask = new JPGameGrabTask(mContext);
+        final RatesQueryTask ratesQueryTask = new RatesQueryTask(mContext);
 
         usGameGrabTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
         euGameGrabTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
@@ -307,7 +290,6 @@ public class MainActivity extends AppCompatActivity {
                         euGameGrabTask.getStatus() != AsyncTask.Status.FINISHED ||
                         jpGameGrabTask.getStatus() != AsyncTask.Status.FINISHED ||
                         ratesQueryTask.getStatus() != AsyncTask.Status.FINISHED) {
-
                 }
                 runOnUiThread(new Runnable() {
                     @Override
@@ -316,10 +298,13 @@ public class MainActivity extends AppCompatActivity {
                         GameAdapter adapter = new GameAdapter(mContext, games);
                         mRecyclerView.setAdapter(adapter);
                         mSwipeRefreshLayout.setRefreshing(false);
+                        Toast.makeText(mContext, getResources().getString(R.string.update_success), Toast.LENGTH_SHORT).show();
                     }
                 });
             }
         }).start();
+
+        mGames = GameLab.get(mContext).getGames();
     }
 
     private void updateItems() {

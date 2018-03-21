@@ -68,6 +68,8 @@ public class GameAdapter extends RecyclerView.Adapter<GameAdapter.ViewHolder> {
         holder.gameCategory.setText(game.getCategory());
         if (game.isDiscount()) {
             holder.gameDiscount.setText("Have discount");
+        } else {
+            holder.gameDiscount.setText("");
         }
         GlideApp.with(mContext)
                 .load(game.getIconUrl())

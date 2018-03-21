@@ -32,12 +32,16 @@ public class SupportedCountryLab {
         mDatabase = new GameBaseHelper(mContext).getWritableDatabase();
     }
 
-    public String getCountryName(String code) {
-        SupportedCountryCursorWrapper cursor = querySupportedCountries("code = ?", new String[] {code});
-        cursor.moveToFirst();
-        String name = cursor.getSupportedCountry().getName();
-        cursor.close();
-        return name;
+    public SupportedCountry getSupportedCountry(String code) {
+        List<SupportedCountry> list = getSupportedCountries();
+
+        for (SupportedCountry supportedCountry : list) {
+            if (supportedCountry.getCode().equals(code)) {
+                return supportedCountry;
+            }
+        }
+
+        return null;
     }
 
     public List<SupportedCountry> getSupportedCountries() {
@@ -64,13 +68,6 @@ public class SupportedCountryLab {
             } else{
                 mDatabase.insert(SupportedCountryTable.NAME, null, values);
             }
-        }
-    }
-
-    // Close the database connection
-    public void Clean() {
-        if (mDatabase.isOpen()) {
-            mDatabase.close();
         }
     }
 

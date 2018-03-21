@@ -26,12 +26,10 @@ public class USGameGrabTask extends AsyncTask<String, Integer, Integer> {
     private static final int TYPE_FAILED = 1;
     private static final int LIMIT = 200;
 
-    private final DownloadListener mListener;
     private final Context mContext;
     private final SQLiteDatabase mDatabase;
 
-    public USGameGrabTask(Context context, DownloadListener listener) {
-        this.mListener = listener;
+    public USGameGrabTask(Context context) {
         this.mContext = context;
         this.mDatabase = new GameBaseHelper(mContext).getWritableDatabase();
     }
@@ -79,10 +77,8 @@ public class USGameGrabTask extends AsyncTask<String, Integer, Integer> {
     protected void onPostExecute(Integer integer) {
         switch (integer) {
             case TYPE_SUCCESS:
-                mListener.onSuccess();
                 break;
             case TYPE_FAILED:
-                mListener.onFailed();
                 break;
             default:
         }
@@ -101,7 +97,7 @@ public class USGameGrabTask extends AsyncTask<String, Integer, Integer> {
 
             try (USGameCursorWrapper cursor =  queryUSGames(null, null )) {
                 if (cursor.getCount() == gameCount) {
-                    return 0;
+                   return 0;
                 }
             }
 

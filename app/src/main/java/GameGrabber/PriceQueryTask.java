@@ -3,6 +3,8 @@ package GameGrabber;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -11,9 +13,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 
-import me.dounx.nintendoeshophelper.GameAdapter;
+import me.dounx.nintendoeshophelper.R;
 import okhttp3.HttpUrl;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -34,12 +37,16 @@ public class PriceQueryTask extends AsyncTask<Game, Integer, Integer> {
     private final GameLab mGameLab;
     private Game mGame;
     private DownloadListener mListener;
+    private ProgressBar mProgressBar;
+    private TextView mProgressInfo;
 
-    public PriceQueryTask(Context context, DownloadListener listener) {
+    public PriceQueryTask(Context context, DownloadListener listener, ProgressBar progressBar, TextView progressInfo) {
         this.mContext = context;
         this.mGameLab = GameLab.get(mContext);
         this.mSupportedCountryLab = SupportedCountryLab.get(mContext);
         mListener = listener;
+        mProgressBar = progressBar;
+        mProgressInfo = progressInfo;
     }
 
     @Override
@@ -95,13 +102,20 @@ public class PriceQueryTask extends AsyncTask<Game, Integer, Integer> {
         }
 
         List<Price> priceList = queryPrice(httpUrls);
+        Iterator<Price> iterator = priceList.iterator();
+        while (iterator.hasNext()) {
+            Price price = iterator.next();
 
-        for (Price price : priceList) {
-            double rates = ratesMap.get(price.getCurrency());
+            // Some area's price is null
+            if (price != null) {
+                double rates = ratesMap.get(price.getCurrency());
 
-            // calculate price
-            double basePrice = Double.parseDouble(price.getPrice()) / rates;
-            price.setPrice(String.valueOf(String.format("%.2f", basePrice)));  // Round it to 2 decimal places
+                // calculate price
+                double basePrice = Double.parseDouble(price.getPrice()) / rates;
+                price.setPrice(String.valueOf(String.format("%.2f", basePrice)));  // Round it to 2 decimal places
+            } else {
+                iterator.remove();
+            }
         }
 
         // Sort list
@@ -112,16 +126,28 @@ public class PriceQueryTask extends AsyncTask<Game, Integer, Integer> {
         });
 
         // Just for debug
-        Log.d("Price", "Lowest Price: " + priceList.get(0).getPrice());
-        Log.d("Price", "Lowest Country: " + mSupportedCountryLab.getCountryName(priceList.get(0).getCountryCode()));
+        // Log.d("Price", "Lowest Price: " + priceList.get(0).getPrice());
+        // Log.d("Price", "Lowest Country: " + mSupportedCountryLab.getCountryName(priceList.get(0).getCountryCode()));
 
         Price price = new Price();
         price.setPrice(priceList.get(0).getPrice());
         price.setCountryCode(priceList.get(0).getCountryCode());
-        price.setCountryName(mSupportedCountryLab.getCountryName(priceList.get(0).getCountryCode()));
+        price.setCountryName(mSupportedCountryLab.getSupportedCountry(priceList.get(0).getCountryCode()).getName());
         price.setCurrency(priceList.get(0).getCurrency());
         mGame.setPrice(price);
         return TYPE_SUCCESS;
+    }
+
+    @Override
+    protected void onProgressUpdate(Integer... values) {
+        super.onProgressUpdate(values);
+        mProgressInfo.setText(mContext.getString(R.string.getting_price_from) + " " + mSupportedCountryLab.getSupportedCountries().get(mProgressBar.getProgress()).getName());
+        mProgressBar.setProgress(mProgressBar.getProgress() + 1);
+    }
+
+    @Override
+    protected void onCancelled() {
+        super.onCancelled();
     }
 
     @Override
@@ -145,6 +171,7 @@ public class PriceQueryTask extends AsyncTask<Game, Integer, Integer> {
                 String responseData = response.body().string();
                 parseData = parsePriceJsonData(responseData);
                 priceList.add(parseData);
+                publishProgress();    // Update the progress
             } catch (Exception e) {
                 e.printStackTrace();
             }

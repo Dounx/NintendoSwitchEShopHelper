@@ -29,12 +29,10 @@ public class JPGameGrabTask extends AsyncTask<String, Integer, Integer> {
     private static final int TYPE_SUCCESS = 0;
     private static final int TYPE_FAILED = 1;
 
-    private final DownloadListener mListener;
     private final Context mContext;
     private final SQLiteDatabase mDatabase;
 
-    public JPGameGrabTask(Context context, DownloadListener listener) {
-        this.mListener = listener;
+    public JPGameGrabTask(Context context) {
         this.mContext = context;
         this.mDatabase = new GameBaseHelper(mContext).getWritableDatabase();
     }
@@ -61,10 +59,8 @@ public class JPGameGrabTask extends AsyncTask<String, Integer, Integer> {
     protected void onPostExecute(Integer integer) {
         switch (integer) {
             case TYPE_SUCCESS:
-                mListener.onSuccess();
                 break;
             case TYPE_FAILED:
-                mListener.onFailed();
                 break;
             default:
         }
