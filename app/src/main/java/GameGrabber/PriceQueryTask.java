@@ -2,7 +2,6 @@ package GameGrabber;
 
 import android.content.Context;
 import android.os.AsyncTask;
-import android.util.Log;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -13,9 +12,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 
+import Util.DateFormatter;
 import me.dounx.nintendoeshophelper.R;
 import okhttp3.HttpUrl;
 import okhttp3.OkHttpClient;
@@ -102,7 +101,21 @@ public class PriceQueryTask extends AsyncTask<Game, Integer, Integer> {
         }
 
         List<Price> priceList = queryPrice(httpUrls);
-        Iterator<Price> iterator = priceList.iterator();
+
+        if (priceList == null) {
+            return TYPE_FAILED;
+        }
+
+        for (Price price : priceList) {
+            double rates = ratesMap.get(price.getCurrency());
+            if (price.getDiscountPrice() != null) {
+                price.setDiscount(String.valueOf(String.format("%.0f", (1 - Double.parseDouble(price.getDiscountPrice()) / Double.parseDouble(price.getPrice())) * 100)) + "%");
+                price.setDiscountPriceByCurrency(String.valueOf(String.format("%.2f", Double.parseDouble(price.getDiscountPrice()) / rates)));
+            }
+            price.setPriceByCurrency(String.valueOf(String.format("%.2f", Double.parseDouble(price.getPrice()) / rates)));  // Round it to 2 decimal places
+        }
+
+        /*Iterator<Price> iterator = priceList.iterator();
         while (iterator.hasNext()) {
             Price price = iterator.next();
 
@@ -116,12 +129,24 @@ public class PriceQueryTask extends AsyncTask<Game, Integer, Integer> {
             } else {
                 iterator.remove();
             }
-        }
+        }*/
 
         // Sort list
         Collections.sort(priceList,new Comparator<Price>(){
             public int compare(Price arg0, Price arg1) {
-                return arg0.getPrice().compareTo(arg1.getPrice());
+                if (arg0.getDiscountPriceByCurrency() != null) {
+                    if (arg1.getDiscountPriceByCurrency() != null) {
+                        return arg0.getDiscountPriceByCurrency().compareTo(arg1.getDiscountPriceByCurrency());
+                    } else {
+                        return arg0.getDiscountPriceByCurrency().compareTo(arg1.getPriceByCurrency());
+                    }
+                } else {
+                    if (arg1.getDiscountPriceByCurrency() != null) {
+                        return arg0.getPriceByCurrency().compareTo(arg1.getDiscountPriceByCurrency());
+                    } else {
+                        return arg0.getPriceByCurrency().compareTo(arg1.getPriceByCurrency());
+                    }
+                }
             }
         });
 
@@ -129,15 +154,8 @@ public class PriceQueryTask extends AsyncTask<Game, Integer, Integer> {
         // Log.d("Price", "Lowest Price: " + priceList.get(0).getPrice());
         // Log.d("Price", "Lowest Country: " + mSupportedCountryLab.getCountryName(priceList.get(0).getCountryCode()));
 
-        if (priceList.size() == 0) {
-            return TYPE_FAILED;
-        }
-
-        Price price = new Price();
-        price.setPrice(priceList.get(0).getPrice());
-        price.setCountryCode(priceList.get(0).getCountryCode());
-        price.setCountryName(mSupportedCountryLab.getSupportedCountry(priceList.get(0).getCountryCode()).getName());
-        price.setCurrency(priceList.get(0).getCurrency());
+        Price price = priceList.get(0);
+        price.setCountryName(mSupportedCountryLab.getSupportedCountry(price.getCountryCode()).getName());
         mGame.setPrice(price);
         return TYPE_SUCCESS;
     }
@@ -174,7 +192,9 @@ public class PriceQueryTask extends AsyncTask<Game, Integer, Integer> {
             try (Response response = client.newCall(request).execute()){
                 String responseData = response.body().string();
                 parseData = parsePriceJsonData(responseData);
-                priceList.add(parseData);
+                if (parseData != null) {
+                    priceList.add(parseData);
+                }
                 publishProgress();    // Update the progress
             } catch (Exception e) {
                 e.printStackTrace();
@@ -203,18 +223,26 @@ public class PriceQueryTask extends AsyncTask<Game, Integer, Integer> {
             JSONArray pricesArray = jsonObject.getJSONArray("prices");
             JSONObject priceObject = pricesArray.getJSONObject(0);
 
-            if (priceObject.getString("sales_status").equals("onsale")) {
+            if (priceObject.getString("sales_status").equals("onsale")  || priceObject.getString("sales_status").equals("preorder")) {
                 JSONObject regularPriceObject = priceObject.getJSONObject("regular_price");
 
                 price.setPrice(regularPriceObject.getString("raw_value"));
                 price.setCountryCode(jsonObject.getString("country"));
                 price.setCurrency(regularPriceObject.getString("currency"));
+
+                if (priceObject.has("discount_price")) {
+                    JSONObject discountPriceObject = priceObject.getJSONObject("discount_price");
+                    price.setDiscountPrice(discountPriceObject.getString("raw_value"));
+
+                    DateFormatter formatter = new DateFormatter();
+                    price.setStartTime(formatter.ParseStringToDate(discountPriceObject.getString("start_datetime")));
+                    price.setEndTime(formatter.ParseStringToDate(discountPriceObject.getString("end_datetime")));
+                }
             } else {
                 return null;
             }
         } catch (Exception e) {
             e.printStackTrace();
-            Log.d("Wrong data", jsonData);
         }
         return price;
     }

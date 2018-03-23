@@ -18,4 +18,8 @@
     <string name="country">Country:</string>
     <string name="failed">Failed!</string>
     <string name="getting_price_from">Getting Price From</string>
+    <string name="start_time">Start Time:</string>
+    <string name="end_time">End Time:</string>
+    <string name="have_discount">Have Discount!</string>
+    <string name="off">OFF</string>
 </resources>

@@ -24,14 +24,12 @@ public class SupportedCountryGrabTask extends AsyncTask<String, Integer, Integer
     private static final int TYPE_SUCCESS = 0;
     private static final int TYPE_FAILED = 1;
 
-    private final DownloadListener mListener;
     private final Context mContext;
     private final SupportedCountryLab mSupportedCountryLab;
 
     private List<SupportedCountry> mCountries;
 
-    public SupportedCountryGrabTask(Context context, DownloadListener listener) {
-        this.mListener = listener;
+    public SupportedCountryGrabTask(Context context) {
         this.mContext = context;
         this.mSupportedCountryLab = SupportedCountryLab.get(mContext);
     }
@@ -102,10 +100,8 @@ public class SupportedCountryGrabTask extends AsyncTask<String, Integer, Integer
     protected void onPostExecute(Integer integer) {
         switch (integer) {
             case TYPE_SUCCESS:
-                mListener.onSuccess();
                 break;
             case TYPE_FAILED:
-                mListener.onFailed();
                 break;
             default:
         }

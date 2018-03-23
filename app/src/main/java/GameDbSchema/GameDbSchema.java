@@ -121,17 +121,26 @@ public class GameDbSchema {
             public static final String US_TITLE = "us_title";
             public static final String EU_TITLE = "eu_title";
             public static final String JP_TITLE = "jp_title";
-            public static final String GAME_CODE = "game_code";
+            public static final String GAME_CODE0 = "game_code0";
+            public static final String GAME_CODE1 = "game_code1";
+            public static final String GAME_CODE2 = "game_code2";
             public static final String LANGUAGE = "language";
             public static final String US_NSUID = "us_nsuid";
             public static final String EU_NSUID = "eu_nsuid";
             public static final String JP_NSUID = "jp_nsuid";
             public static final String DISCOUNT = "discount";
-            public static final String ICON_URL = "icon_url";
-            public static final String URL = "url";
-            public static final String RELEASE_DATE = "release_date";
-            public static final String PLAYER_NUMBER = "player_number";
-            public static final String CATEGORY = "category";
+            public static final String ICON_URL0 = "icon_url0";
+            public static final String ICON_URL1 = "icon_url1";
+            public static final String URL0 = "url0";
+            public static final String URL1 = "url1";
+            public static final String URL2 = "url2";
+            public static final String RELEASE_DATE0 = "release_date0";
+            public static final String RELEASE_DATE1 = "release_date1";
+            public static final String RELEASE_DATE2 = "release_date2";
+            public static final String PLAYER_NUMBER0 = "player_number0";
+            public static final String PLAYER_NUMBER1 = "player_number1";
+            public static final String CATEGORY0 = "category0";
+            public static final String CATEGORY1 = "category1";
         }
     }
 }

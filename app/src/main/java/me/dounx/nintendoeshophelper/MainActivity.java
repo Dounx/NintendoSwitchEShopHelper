@@ -33,6 +33,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.ListPreloader;
 import com.bumptech.glide.RequestBuilder;
 import com.bumptech.glide.integration.recyclerview.RecyclerViewPreloader;
+import com.bumptech.glide.util.FixedPreloadSizeProvider;
 import com.bumptech.glide.util.ViewPreloadSizeProvider;
 
 import java.io.File;
@@ -74,6 +75,8 @@ public class MainActivity extends AppCompatActivity {
                     .penaltyDeath()
                     .build());
         }
+
+        //new GetInitalDataToDatabase(this).getInitalDataToDatabase();
 
         PackageInfo info = null;
         try {
@@ -158,7 +161,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
         mGames = GameLab.get(this).getGames();
-        ViewPreloadSizeProvider<Game> sizeProvider = new ViewPreloadSizeProvider<>();
+        FixedPreloadSizeProvider<Game> sizeProvider = new FixedPreloadSizeProvider(500, 250);
         ListPreloader.PreloadModelProvider modelProvider = new MyPreloadModelProvider();
         RecyclerViewPreloader<Game> preLoader = new RecyclerViewPreloader<>(Glide.with(this), modelProvider, sizeProvider, 30);
 
@@ -294,17 +297,23 @@ public class MainActivity extends AppCompatActivity {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        List<Game> games = GameLab.get(mContext).getGames();
-                        GameAdapter adapter = new GameAdapter(mContext, games);
+                        String pos = getSupportActionBar().getTitle().toString();
+                        if (pos.equals(mContext.getString(R.string.nav_all_games))) {
+                            mGames = GameLab.get(mContext).getGames();
+                        } else if (pos.equals(mContext.getString(R.string.nav_not_released_games))) {
+                            mGames = GameLab.get(mContext).getNewGames();
+                        } else if (pos.equals(mContext.getString(R.string.nav_discount_games))) {
+                            mGames = GameLab.get(mContext).getDiscountGames();
+                        }
+                        GameAdapter adapter = new GameAdapter(mContext, mGames);
                         mRecyclerView.setAdapter(adapter);
+
                         mSwipeRefreshLayout.setRefreshing(false);
                         Toast.makeText(mContext, getResources().getString(R.string.update_success), Toast.LENGTH_SHORT).show();
                     }
                 });
             }
         }).start();
-
-        mGames = GameLab.get(mContext).getGames();
     }
 
     private void updateItems() {
@@ -314,13 +323,14 @@ public class MainActivity extends AppCompatActivity {
             games = GameLab.get(mContext).getGames();
         } else {
             games = new ArrayList<>();
-            for (Game game : mGames) {
-                if (game.getUsTitle().toLowerCase().contains(query.toLowerCase())) {
+            for (Game game : GameLab.get(mContext).getGames()) {
+                if (game.getTitle().toLowerCase().contains(query.toLowerCase())) {
                     games.add(game);
                 }
             }
         }
-        GameAdapter adapter = new GameAdapter(mContext, games);
+        mGames = games;
+        GameAdapter adapter = new GameAdapter(mContext, mGames);
         mRecyclerView.setAdapter(adapter);
     }
 

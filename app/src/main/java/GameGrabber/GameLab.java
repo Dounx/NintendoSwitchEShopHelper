@@ -18,6 +18,7 @@ import java.util.Locale;
 
 import GameDbSchema.GameBaseHelper;
 import GameDbSchema.GameCursorWrapper;
+import Util.DateFormatter;
 
 import static GameDbSchema.GameDbSchema.*;
 
@@ -59,7 +60,7 @@ public class GameLab {
     public Game getGame(String title) {
         List<Game> games = getGames();
         for (Game game : games) {
-            if (game.getUsTitle().equals(title)) {
+            if (game.getTitle().equals(title)) {
                 return game;
             }
         }
@@ -71,15 +72,10 @@ public class GameLab {
 
         Collections.sort(games,new Comparator<Game>(){
             public int compare(Game arg0, Game arg1) {
-                Date date0 = null;
-                Date date1 = null;
-                DateFormat format = new SimpleDateFormat("MMM d, yyyy", Locale.ENGLISH);
-                try {
-                    date0 = format.parse(arg0.getReleaseDate());
-                    date1 = format.parse(arg1.getReleaseDate());
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+                DateFormatter formatter = new DateFormatter();
+                Date date0 = arg0.getReleaseDate();
+                Date date1 = arg1.getReleaseDate();
+
                 return isAsc? date0.compareTo(date1) : date1.compareTo(date0);
             }
         });
@@ -87,19 +83,14 @@ public class GameLab {
         return games;
     }
 
+    // Not released games
     public List<Game> getNewGames() {
         List<Game> games = getGames();
         List<Game> newGames = new ArrayList<>();
         List<Date> dates = new ArrayList<>();
-        DateFormat format = new SimpleDateFormat("MMM d, yyyy", Locale.ENGLISH);
 
         for (Game game : games) {
-            Date date = null;
-            try {
-                date = format.parse(game.getReleaseDate());
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+            Date date = game.getReleaseDate();
             dates.add(date);
         }
 

@@ -58,26 +58,26 @@
             android:layout_height="match_parent"
             android:layout_marginRight="8dp"
             android:textSize="18sp"
-            android:text="@string/lowest_price"/>
+            android:text="@string/country" />
 
         <TextView
-            android:id="@+id/game_page_price"
+            android:id="@+id/game_page_country"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
+            android:layout_marginRight="8dp"
             android:textSize="18sp"
             android:textColor="@android:color/holo_red_light"
-            android:hint="@string/loading"
-            tools:text="Price" />
+            android:hint="@string/loading" />
 
         <TextView
             android:id="@+id/game_page_discount"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:layout_marginLeft="8dp"
+            android:visibility="gone"
             android:gravity="center_vertical"
-            android:textSize="14sp"
+            android:textSize="18sp"
             android:textColor="@android:color/holo_red_light"
-            tools:text="Discount" />
+            tools:text="Have Discount" />
 
     </LinearLayout>
 
@@ -90,18 +90,83 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_marginRight="8dp"
+            android:gravity="center_vertical"
             android:textSize="18sp"
-            android:text="@string/country"/>
+            android:text="@string/lowest_price"/>
 
         <TextView
-            android:id="@+id/game_page_country"
-            android:layout_width="0dp"
+            android:id="@+id/game_page_price"
+            android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:layout_weight="1"
+            android:gravity="center_vertical"
+            android:layout_marginRight="8dp"
             android:textSize="18sp"
             android:textColor="@android:color/holo_red_light"
             android:hint="@string/loading"
-            tools:text="Country" />
+            tools:text="Price" />
+
+        <TextView
+            android:id="@+id/game_page_discount_price"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginRight="8dp"
+            android:visibility="gone"
+            android:textSize="18sp"
+            android:textColor="@android:color/holo_red_light"
+            tools:text="Discount Price" />
+
+        <TextView
+            android:id="@+id/game_page_discount_num"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:visibility="gone"
+            android:gravity="center_vertical"
+            android:textSize="18sp"
+            android:textColor="@android:color/holo_red_light"
+            tools:text="XX% OFF"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/game_page_discount_time"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:visibility="gone">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginRight="8dp"
+            android:textSize="18sp"
+            android:text="@string/start_time"/>
+
+        <TextView
+            android:id="@+id/game_page_start_time"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginRight="8dp"
+            android:textSize="18sp"
+            android:textColor="@android:color/holo_red_light"
+            android:hint="@string/loading"
+            tools:text="Start Time" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginRight="8dp"
+            android:textSize="18sp"
+            android:text="@string/end_time"/>
+
+        <TextView
+            android:id="@+id/game_page_end_time"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:textSize="18sp"
+            android:textColor="@android:color/holo_red_light"
+            android:hint="@string/loading"
+            tools:text="End Time" />
+
     </LinearLayout>
 
     <LinearLayout

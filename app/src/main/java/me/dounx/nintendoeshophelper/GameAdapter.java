@@ -14,6 +14,7 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import java.util.List;
 
 import GameGrabber.Game;
+import Util.DateFormatter;
 
 public class GameAdapter extends RecyclerView.Adapter<GameAdapter.ViewHolder> {
     private List<Game> mGameList;
@@ -40,7 +41,8 @@ public class GameAdapter extends RecyclerView.Adapter<GameAdapter.ViewHolder> {
         @Override
         public void onClick(View view) {
             Game game = mGameList.get((int)view.getTag());
-            Intent intent = GamePageActivity.newIntent(mContext, game.getUsTitle());
+
+            Intent intent = GamePageActivity.newIntent(mContext, game.getTitle());
             mContext.startActivity(intent);
         }
     }
@@ -63,14 +65,29 @@ public class GameAdapter extends RecyclerView.Adapter<GameAdapter.ViewHolder> {
     public void onBindViewHolder(ViewHolder holder, int position) {
         holder.itemView.setTag(position);
         Game game = mGameList.get(position);
-        holder.gameName.setText(game.getUsTitle());
-        holder.gameReleaseDate.setText(game.getReleaseDate());
+
+        String title = null;
+        if (game.getUsTitle() != null) {
+            title = game.getUsTitle();
+        } else if (game.getEuNsUid() != null) {
+            title = game.getEuTitle();
+        } else if (game.getJpTitle() != null) {
+            title = game.getJpTitle();
+        }
+
+        holder.gameName.setText(title);
+
+        DateFormatter dateFormatter = new DateFormatter();
+        holder.gameReleaseDate.setText(dateFormatter.ParseDateToString(game.getReleaseDate()));
+
         holder.gameCategory.setText(game.getCategory());
+
         if (game.isDiscount()) {
             holder.gameDiscount.setText("Have discount");
         } else {
             holder.gameDiscount.setText("");
         }
+
         GlideApp.with(mContext)
                 .load(game.getIconUrl())
                 .error(R.drawable.ic_no_pic)

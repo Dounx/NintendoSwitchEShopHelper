@@ -1,5 +1,7 @@
 package GameGrabber;
 
+import java.util.Date;
+
 /**
  * The final class showed for users, it's data from Game View (from database)
  */
@@ -12,13 +14,41 @@ public class Game {
     private String mUsNsUid;
     private String mEuNsUid;
     private String mJpNsUid;
-    private boolean discount;
+    private boolean mDiscount;
+    private boolean mFavour;
     private String mIconUrl;
     private String mUrl;
-    private String mReleaseDate;
+    private Date mReleaseDate;
     private String mPlayerNumber;
     private String mCategory;
     private Price mPrice;    // Only get data when needed, use class method queryPrice()
+
+    public String getTitle() {
+        if (mUsTitle != null) {
+            return mUsTitle;
+        } else if (mEuTitle != null) {
+            return mEuTitle;
+        } else if (mJpTitle != null) {
+            return mJpTitle;
+        }
+        return null;
+    }
+
+    public String getIconUrl() {
+        return mIconUrl;
+    }
+
+    public void setIconUrl(String iconUrl) {
+        mIconUrl = iconUrl;
+    }
+
+    public boolean isFavour() {
+        return mFavour;
+    }
+
+    public void setFavour(boolean favour) {
+        mFavour = favour;
+    }
 
     public String getLanguage() {
         return mLanguage;
@@ -53,11 +83,11 @@ public class Game {
     }
 
     public boolean isDiscount() {
-        return discount;
+        return mDiscount;
     }
 
     public void setDiscount(boolean discount) {
-        this.discount = discount;
+        this.mDiscount = discount;
     }
 
     public String getUsTitle() {
@@ -84,14 +114,6 @@ public class Game {
         mJpTitle = jpTitle;
     }
 
-    public String getIconUrl() {
-        return mIconUrl;
-    }
-
-    public void setIconUrl(String iconUrl) {
-        mIconUrl = iconUrl;
-    }
-
     public String getUrl() {
         return mUrl;
     }
@@ -108,11 +130,11 @@ public class Game {
         mGameCode = gameCode;
     }
 
-    public String getReleaseDate() {
+    public Date getReleaseDate() {
         return mReleaseDate;
     }
 
-    public void setReleaseDate(String releaseDate) {
+    public void setReleaseDate(Date releaseDate) {
         mReleaseDate = releaseDate;
     }
 

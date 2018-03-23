@@ -2,6 +2,7 @@ package me.dounx.nintendoeshophelper;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Paint;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
@@ -9,6 +10,7 @@ import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -22,6 +24,7 @@ import GameGrabber.GameLab;
 import GameGrabber.PriceQueryTask;
 import GameGrabber.SupportedCountry;
 import GameGrabber.SupportedCountryLab;
+import Util.DateFormatter;
 
 public class GamePageActivity extends AppCompatActivity {
     public static final String EXTRA_GAME_TITLE = "me.dounx.android.nintendoeshophelper.game_title";
@@ -46,7 +49,8 @@ public class GamePageActivity extends AppCompatActivity {
 
         mGame = GameLab.get(this).getGame(title);
 
-        getSupportActionBar().setTitle(mGame.getUsTitle());
+
+        getSupportActionBar().setTitle(mGame.getTitle());
 
         ImageView gamePageImage = findViewById(R.id.game_page_image);
         gamePageImage.setOnClickListener(new View.OnClickListener() {
@@ -65,14 +69,33 @@ public class GamePageActivity extends AppCompatActivity {
                 .placeholder(R.drawable.ic_loading)
                 .into(gamePageImage);
 
+        if (mGame.isDiscount()) {
+            TextView gamePageDiscountPrice = findViewById(R.id.game_page_discount_price);
+            TextView gamePageDiscount = findViewById(R.id.game_page_discount);
+            TextView gamePageDiscountNum = findViewById(R.id.game_page_discount_num);
+            TextView gamePageStartTime = findViewById(R.id.game_page_start_time);
+            TextView gamePageEndTime = findViewById(R.id.game_page_end_time);
+            LinearLayout gamePageDiscountTime = findViewById(R.id.game_page_discount_time);
+
+            gamePageDiscountPrice.setVisibility(View.VISIBLE);
+            gamePageDiscountNum.setVisibility(View.VISIBLE);
+            gamePageStartTime.setVisibility(View.VISIBLE);
+            gamePageEndTime.setVisibility(View.VISIBLE);
+            gamePageDiscount.setVisibility(View.VISIBLE);
+            gamePageDiscountTime.setVisibility(View.VISIBLE);
+            gamePageDiscount.setText(getString(R.string.have_discount));
+        }
+
         TextView gamePageReleaseDate = findViewById(R.id.game_page_release_date);
-        gamePageReleaseDate.setText(mGame.getReleaseDate());
+
+        DateFormatter dateFormatter = new DateFormatter();
+        gamePageReleaseDate.setText(dateFormatter.ParseDateToString(mGame.getReleaseDate()));
+
         TextView gamePageLanguage = findViewById(R.id.game_page_language);
         gamePageLanguage.setText(mGame.getLanguage());
         TextView gamePagePlayerNumber = findViewById(R.id.game_page_player_number);
         gamePagePlayerNumber.setText(mGame.getPlayerNumber());
-        TextView gamePageDiscount = findViewById(R.id.game_page_discount);
-        gamePageDiscount.setText(mGame.isDiscount()? "Have discount" : "");
+
         TextView gamePageCategory = findViewById(R.id.game_page_category);
         gamePageCategory.setText(mGame.getCategory());
 
@@ -87,17 +110,34 @@ public class GamePageActivity extends AppCompatActivity {
         DownloadListener listener = new DownloadListener() {
             @Override
             public void onSuccess() {
-                gamePagePrice.setText(mGame.getPrice().getPrice() + " CNY ");
+                if (mGame.isDiscount()) {
+                    TextView gamePageDiscountPrice = findViewById(R.id.game_page_discount_price);
+                    TextView gamePageDiscountNum = findViewById(R.id.game_page_discount_num);
+                    TextView gamePageStartTime = findViewById(R.id.game_page_start_time);
+                    TextView gamePageEndTime = findViewById(R.id.game_page_end_time);
+                    TextView gamePagePrice = findViewById(R.id.game_page_price);
+
+                    gamePagePrice.getPaint().setFlags(Paint.STRIKE_THRU_TEXT_FLAG );
+
+                    gamePageDiscountPrice.setText(mGame.getPrice().getDiscountPriceByCurrency() + " CNY");
+                    gamePageDiscountNum.setText(mGame.getPrice().getDiscount() + getString(R.string.off));
+
+                    DateFormatter formatter = new DateFormatter();
+                    gamePageStartTime.setText(formatter.ParseDateToString(mGame.getPrice().getStartTime()));
+                    gamePageEndTime.setText(formatter.ParseDateToString(mGame.getPrice().getEndTime()));
+                }
+
+                gamePagePrice.setText(mGame.getPrice().getPriceByCurrency() + " CNY ");
                 gamePageCountry.setText(mGame.getPrice().getCountryName());
-                progressBar.setVisibility(View.INVISIBLE);
-                progress_info.setVisibility(View.INVISIBLE);
+                progressBar.setVisibility(View.GONE);
+                progress_info.setVisibility(View.GONE);
             }
             @Override
             public void onFailed() {
                 gamePagePrice.setText(R.string.failed);
                 gamePageCountry.setText(R.string.failed);
-                progressBar.setVisibility(View.INVISIBLE);
-                progress_info.setVisibility(View.INVISIBLE);
+                progressBar.setVisibility(View.GONE);
+                progress_info.setVisibility(View.GONE);
             }
         };
 

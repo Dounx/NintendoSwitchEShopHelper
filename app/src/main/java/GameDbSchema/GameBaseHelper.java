@@ -117,9 +117,20 @@ public class GameBaseHelper extends SQLiteOpenHelper {
                 ")"
         );
 
-        sqLiteDatabase.execSQL("CREATE VIEW Game AS  " +
-                "SELECT USGame.title as us_title, EUGame.title as eu_title, JPGame.title_name as jp_title,USGame.game_code, EUGame.language_availability as language, USGame.nsuid as us_nsuid, EUGame.nsuid_txt as eu_nsuid, JPGame.nsuid as jp_nsuid, EUGame.price_has_discount_b as discount, EUGame.image_url_h2x1_s as icon_url, USGame.slug as url, USGame.release_date, USGame.number_of_players as player_number, USGame.category " +
-                "FROM USGame left outer join EUGame on USGame.game_code = EUGame.product_code_txt left outer join JPGame on game_code = initial_code"
+        sqLiteDatabase.execSQL("CREATE VIEW TempGame AS " +
+                "SELECT USGame.title AS us_title, EUGame.title AS eu_title, USGame.game_code AS game_code0, EUGame.product_code_txt AS game_code1, EUGame.language_availability AS language, USGame.nsuid AS us_nsuid, EUGame.nsuid_txt AS eu_nsuid, EUGame.price_has_discount_b AS discount, EUGame.image_url_h2x1_s AS icon_url0, USGame.slug AS url0, EUGame.url AS url1, USGame.release_date AS release_date0, EUGame.dates_released_dts AS release_date1, USGame.number_of_players AS player_number0, EUGame.players_to AS player_number1, USGame.category AS category0, EUGame.pretty_game_categories_txt AS category1 " +
+                "FROM USGame LEFT OUTER JOIN EUGame ON USGame.game_code = EUGame.product_code_txt " +
+                "UNION " +
+                "SELECT USGame.title AS us_title, EUGame.title AS eu_title, USGame.game_code AS game_code0, EUGame.product_code_txt AS game_code1, EUGame.language_availability AS language, USGame.nsuid AS us_nsuid, EUGame.nsuid_txt AS eu_nsuid, EUGame.price_has_discount_b AS discount, EUGame.image_url_h2x1_s AS icon_url0, USGame.slug AS url0, EUGame.url AS url1, USGame.release_date AS release_date0, EUGame.dates_released_dts AS release_date1, USGame.number_of_players AS player_number0, EUGame.players_to AS player_number1, USGame.category AS category0, EUGame.pretty_game_categories_txt AS category1 " +
+                "FROM EUGame LEFT OUTER JOIN USGame ON USGame.game_code = EUGame.product_code_txt;"
+        );
+
+        sqLiteDatabase.execSQL("CREATE VIEW Game AS " +
+                "SELECT us_title, eu_title, JPGame.title_name AS jp_title, game_code0, game_code1, JPGame.initial_code AS game_code2, language, us_nsuid, eu_nsuid, JPGame.nsuid AS jp_nsuid, discount, icon_url0, JPGame.screenshot_img_url AS icon_url1, url0, url1, JPGame.link_url AS url2, release_date0, release_date1, JPGame.sales_date AS release_date2, player_number0, player_number1, category0, category1 " +
+                "FROM TempGame LEFT OUTER JOIN JPGame ON TempGame.game_code0 = JPGame.initial_code " +
+                "UNION " +
+                "SELECT us_title, eu_title, JPGame.title_name AS jp_title, game_code0, game_code1, JPGame.initial_code AS game_code2, language, us_nsuid, eu_nsuid, JPGame.nsuid AS jp_nsuid, discount, icon_url0, JPGame.screenshot_img_url AS icon_url1, url0, url1, JPGame.link_url AS url2, release_date0, release_date1, JPGame.sales_date AS release_date2, player_number0, player_number1, category0, category1 " +
+                "FROM JPGame LEFT OUTER JOIN TempGame ON TempGame.game_code0 = JPGame.initial_code;"
         );
     }
 
