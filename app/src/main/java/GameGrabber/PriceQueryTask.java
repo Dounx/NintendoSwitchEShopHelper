@@ -194,6 +194,8 @@ public class PriceQueryTask extends AsyncTask<Game, Integer, Integer> {
                 parseData = parsePriceJsonData(responseData);
                 if (parseData != null) {
                     priceList.add(parseData);
+                } else {
+                    return null;
                 }
                 publishProgress();    // Update the progress
             } catch (Exception e) {

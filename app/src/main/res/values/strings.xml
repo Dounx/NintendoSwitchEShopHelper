@@ -37,7 +37,7 @@
     <string name="update_support_country">Update Support Country</string>
     <string name="update_support_country_summary">It may take a long time to update all open service countries.</string>
     <string name="about">About</string>
-    <string name="github_address">Github Address</string>
+    <string name="github_title">Github</string>
     <string name="github">https://github.com/Dounx/NintendoEShopHelper</string>
 
     <array name="language_entries">

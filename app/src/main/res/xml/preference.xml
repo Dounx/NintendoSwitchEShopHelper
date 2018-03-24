@@ -44,7 +44,7 @@
         android:title="@string/about">
 
         <Preference
-            android:title="@string/github_address"
+            android:title="@string/github_title"
             android:summary="@string/github" >
 
             <intent android:action="android.intent.action.VIEW"
