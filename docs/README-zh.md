@@ -1,8 +1,8 @@
-## NintendoEShopHelper
+## NintendoSwitchEShopHelper
 
 获取所有的 Nintendo Switch 游戏列表，并在所有的地区商店中找到最低的价格
 
-[English Readme](https://github.com/Dounx/NintendoEShopHelper/blob/master/README.md) | [Wiki](https://github.com/Dounx/NintendoEShopHelper/wiki)
+[English Readme](https://github.com/Dounx/NintendoEShopHelper/blob/master/README.md) | [Wiki](https://github.com/Dounx/NintendoEShopHelper/wiki) | [下载地址](https://github.com/Dounx/NintendoSwitchEShopHelper/releases/download/1.0/NintendoSwitchEShopHelper.apk)
 
 ### 依赖
 
