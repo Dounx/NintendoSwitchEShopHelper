@@ -7,6 +7,13 @@ import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceScreen;
+import android.view.Gravity;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.FrameLayout;
+import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import GameGrabber.EUGameGrabTask;
@@ -24,6 +31,7 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
 
     private PreferenceScreen mScreen = null;
     private Context mContext = null;
+    private ProgressBar mProgressBar = null;
 
     public SettingsFragment() {
 
@@ -33,8 +41,10 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         this.addPreferencesFromResource(R.xml.preference);
+
         mScreen = getPreferenceScreen();
         mContext = getActivity().getApplicationContext();
+        mProgressBar =  getActivity().findViewById(R.id.settings_progress_bar);
 
         final Preference updateGame = findPreference("update_game_info");
         updateGame.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
@@ -88,6 +98,8 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
         final EUGameGrabTask euGameGrabTask = new EUGameGrabTask(mContext);
         final JPGameGrabTask jpGameGrabTask = new JPGameGrabTask(mContext);
 
+        mProgressBar.setVisibility(View.VISIBLE);
+
         usGameGrabTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
         euGameGrabTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
         jpGameGrabTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
@@ -102,6 +114,7 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
                 getActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
+                        mProgressBar.setVisibility(View.GONE);
                         Toast.makeText(mContext, getResources().getString(R.string.update_success), Toast.LENGTH_SHORT).show();
                     }
                 });
@@ -111,6 +124,9 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
 
     void updateRate() {
         final RatesQueryTask ratesQueryTask = new RatesQueryTask(mContext);
+
+        mProgressBar.setVisibility(View.VISIBLE);
+
         ratesQueryTask.execute(UserPreferences.getStoredCurrency(mContext));
 
         new Thread(new Runnable() {
@@ -121,6 +137,7 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
                 getActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
+                        mProgressBar.setVisibility(View.GONE);
                         Toast.makeText(mContext, getResources().getString(R.string.update_success), Toast.LENGTH_SHORT).show();
                     }
                 });
@@ -130,6 +147,9 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
 
     void updateCountry() {
         final SupportedCountryGrabTask supportedCountryGrabTask = new SupportedCountryGrabTask(mContext);
+
+        mProgressBar.setVisibility(View.VISIBLE);
+
         supportedCountryGrabTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 
         new Thread(new Runnable() {
@@ -140,6 +160,7 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
                 getActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
+                        mProgressBar.setVisibility(View.GONE);
                         Toast.makeText(mContext, getResources().getString(R.string.update_success), Toast.LENGTH_SHORT).show();
                     }
                 });

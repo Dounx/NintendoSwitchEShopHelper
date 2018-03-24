@@ -174,7 +174,9 @@ public class EUGameGrabTask  extends AsyncTask<String, Integer, Integer>  {
                 euGame.setPhysicalVersionB(gameObject.getBoolean("physical_version_b"));
 
                 euGame.setGameCategoriesTxt(gameObject.getJSONArray("game_categories_txt").getString(0));
-                euGame.setPlayableOnTxt(gameObject.getJSONArray("playable_on_txt").getString(0));
+                if (gameObject.has("playable_on_txt")) {
+                    euGame.setPlayableOnTxt(gameObject.getJSONArray("playable_on_txt").getString(0));
+                }
                 euGame.setProductCodeTxt(parseGameCode(gameObject.getJSONArray("product_code_txt").getString(0)));
                 euGame.setLanguageAvailability(gameObject.getJSONArray("language_availability").getString(0));
                 euGame.setSystemType(gameObject.getJSONArray("system_type").getString(0));
