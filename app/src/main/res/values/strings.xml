@@ -22,4 +22,102 @@
     <string name="end_time">End Time:</string>
     <string name="have_discount">Have Discount!</string>
     <string name="off">OFF</string>
+    <string name="title_activity_settings">Settings</string>
+
+    <string name="general_settings">General Settings</string>
+    <string name="choose_language">Choose Language</string>
+    <string name="choose_language_summary">Currently, there are only two languages ​​to choose from.</string>
+    <string name="choose_currency">Choose Currency</string>
+    <string name="choose_currency_summary">Choose a currency you want to convert.</string>
+    <string name="update_data">Update Data</string>
+    <string name="update_game_info">Update Game Information</string>
+    <string name="update_game_info_summary">Update the game list data of US service, Europe service and Japan service.</string>
+    <string name="update_rate_info">Update Rate Information</string>
+    <string name="update_rate_info_summary">Update the latest exchange rate.</string>
+    <string name="update_support_country">Update Support Country</string>
+    <string name="update_support_country_summary">It may take a long time to update all open service countries.</string>
+    <string name="about">About</string>
+    <string name="github_address">Github Address</string>
+    <string name="github">https://github.com/Dounx/NintendoEShopHelper</string>
+
+    <array name="language_entries">
+        <item>English</item>
+        <item>Chinese</item>
+    </array>
+
+    <array name="language_entry_values">
+        <item>English</item>
+        <item>Chinese</item>
+    </array>
+
+    <array name="currency_entries">
+        <item>AUD</item>
+        <item>BGN</item>
+        <item>BRL</item>
+        <item>CAD</item>
+        <item>CHF</item>
+        <item>CNY</item>
+        <item>CZK</item>
+        <item>DKK</item>
+        <item>GBP</item>
+        <item>HKD</item>
+        <item>HRK</item>
+        <item>HUF</item>
+        <item>IDR</item>
+        <item>ILS</item>
+        <item>INR</item>
+        <item>ISK</item>
+        <item>JPY</item>
+        <item>KRW</item>
+        <item>MXN</item>
+        <item>MYR</item>
+        <item>NOK</item>
+        <item>NZD</item>
+        <item>PHP</item>
+        <item>PLN</item>
+        <item>RON</item>
+        <item>RUB</item>
+        <item>SEK</item>
+        <item>SGD</item>
+        <item>THB</item>
+        <item>TRY</item>
+        <item>USD</item>
+        <item>ZAR</item>
+    </array>
+
+    <array name="currency_entry_values">
+        <item>AUD</item>
+        <item>BGN</item>
+        <item>BRL</item>
+        <item>CAD</item>
+        <item>CHF</item>
+        <item>CNY</item>
+        <item>CZK</item>
+        <item>DKK</item>
+        <item>GBP</item>
+        <item>HKD</item>
+        <item>HRK</item>
+        <item>HUF</item>
+        <item>IDR</item>
+        <item>ILS</item>
+        <item>INR</item>
+        <item>ISK</item>
+        <item>JPY</item>
+        <item>KRW</item>
+        <item>MXN</item>
+        <item>MYR</item>
+        <item>NOK</item>
+        <item>NZD</item>
+        <item>PHP</item>
+        <item>PLN</item>
+        <item>RON</item>
+        <item>RUB</item>
+        <item>SEK</item>
+        <item>SGD</item>
+        <item>THB</item>
+        <item>TRY</item>
+        <item>USD</item>
+        <item>ZAR</item>
+    </array>
+
 </resources>

@@ -14,7 +14,7 @@ import GameGrabber.USGameGrabTask;
  */
 
 public class GetInitalDataToDatabase {
-    public void getInitalDataToDatabase(Context context) {
+    public static void getInitalDataToDatabase(Context context) {
         final USGameGrabTask usGameGrabTask = new USGameGrabTask(context);
         final EUGameGrabTask euGameGrabTask = new EUGameGrabTask(context);
         final JPGameGrabTask jpGameGrabTask = new JPGameGrabTask(context);

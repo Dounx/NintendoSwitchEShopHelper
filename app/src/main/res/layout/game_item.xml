@@ -20,7 +20,6 @@
 
     </LinearLayout>
 
-
     <LinearLayout
         android:layout_width="0dp"
         android:layout_height="match_parent"
@@ -57,15 +56,6 @@
                 android:layout_weight="1"
                 android:gravity="bottom"
                 tools:text="Release Date"
-                android:textSize="14sp" />
-
-            <TextView
-                android:id="@+id/game_discount"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:gravity="bottom"
-                tools:text="Discount"
                 android:textSize="14sp" />
 
         </LinearLayout>

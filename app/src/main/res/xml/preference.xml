@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <PreferenceCategory
+        android:title="@string/general_settings">
+
+        <ListPreference
+            android:key="language"
+            android:title="@string/choose_language"
+            android:summary="@string/choose_language_summary"
+            android:entries="@array/language_entries"
+            android:entryValues="@array/language_entry_values" />
+
+        <ListPreference
+            android:key="currency"
+            android:title="@string/choose_currency"
+            android:summary="@string/choose_currency_summary"
+            android:entries="@array/currency_entries"
+            android:entryValues="@array/currency_entry_values" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        android:title="@string/update_data">
+
+        <Preference
+            android:key="update_game_info"
+            android:title="@string/update_game_info"
+            android:summary="@string/update_game_info_summary" />
+
+        <Preference
+            android:key="update_rate_info"
+            android:title="@string/update_rate_info"
+            android:summary="@string/update_rate_info_summary" />
+
+        <Preference
+            android:key="update_support_country"
+            android:title="@string/update_support_country"
+            android:summary="@string/update_support_country_summary" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        android:title="@string/about">
+
+        <Preference
+            android:title="@string/github_address"
+            android:summary="@string/github" >
+
+            <intent android:action="android.intent.action.VIEW"
+                android:data="@string/github" />
+
+        </Preference>
+
+    </PreferenceCategory>
+
+</PreferenceScreen>

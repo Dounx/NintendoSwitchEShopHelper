@@ -102,7 +102,7 @@ public class PriceQueryTask extends AsyncTask<Game, Integer, Integer> {
 
         List<Price> priceList = queryPrice(httpUrls);
 
-        if (priceList == null) {
+        if (priceList == null || priceList.size() == 0) {
             return TYPE_FAILED;
         }
 
@@ -234,9 +234,8 @@ public class PriceQueryTask extends AsyncTask<Game, Integer, Integer> {
                     JSONObject discountPriceObject = priceObject.getJSONObject("discount_price");
                     price.setDiscountPrice(discountPriceObject.getString("raw_value"));
 
-                    DateFormatter formatter = new DateFormatter();
-                    price.setStartTime(formatter.ParseStringToDate(discountPriceObject.getString("start_datetime")));
-                    price.setEndTime(formatter.ParseStringToDate(discountPriceObject.getString("end_datetime")));
+                    price.setStartTime(DateFormatter.ParseStringToDate(discountPriceObject.getString("start_datetime")));
+                    price.setEndTime(DateFormatter.ParseStringToDate(discountPriceObject.getString("end_datetime")));
                 }
             } else {
                 return null;

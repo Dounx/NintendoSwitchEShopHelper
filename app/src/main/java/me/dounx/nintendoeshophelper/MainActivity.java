@@ -1,6 +1,7 @@
 package me.dounx.nintendoeshophelper;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
@@ -23,7 +24,6 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -34,7 +34,6 @@ import com.bumptech.glide.ListPreloader;
 import com.bumptech.glide.RequestBuilder;
 import com.bumptech.glide.integration.recyclerview.RecyclerViewPreloader;
 import com.bumptech.glide.util.FixedPreloadSizeProvider;
-import com.bumptech.glide.util.ViewPreloadSizeProvider;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -44,14 +43,19 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 
+import GameGrabber.CountryGrabTask;
+import GameGrabber.DownloadListener;
 import GameGrabber.EUGameGrabTask;
 import GameGrabber.Game;
 import GameGrabber.GameLab;
 import GameGrabber.JPGameGrabTask;
 import GameGrabber.RatesQueryTask;
+import GameGrabber.SupportedCountryLab;
 import GameGrabber.USGameGrabTask;
 import Util.QueryPreferences;
+import Util.UserPreferences;
 
 public class MainActivity extends AppCompatActivity {
     private static boolean STRICT_MODE = false;
@@ -60,12 +64,13 @@ public class MainActivity extends AppCompatActivity {
     private DrawerLayout mDrawerLayout;
     private List<Game> mGames;
     private SwipeRefreshLayout mSwipeRefreshLayout;
-    private RecyclerView mRecyclerView;
+    private GameAdapter mGameAdapter;
     private LinearLayoutManager mLayoutManager;
     private FloatingActionButton mFab;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        mContext = this;
 
         if (STRICT_MODE) {
             StrictMode.setVmPolicy(new StrictMode.VmPolicy.Builder()
@@ -76,8 +81,7 @@ public class MainActivity extends AppCompatActivity {
                     .build());
         }
 
-        //new GetInitalDataToDatabase(this).getInitalDataToDatabase();
-
+        // Init Database or Shared Preferences
         PackageInfo info = null;
         try {
             info = getPackageManager().getPackageInfo(getPackageName(), 0);
@@ -90,19 +94,38 @@ public class MainActivity extends AppCompatActivity {
         if (currentVersion > lastVersion) {
             try {
                 CopySqliteFileFromRawToDatabases("GameBase.db");
+
+                // Init User SharedPreferences todo
+                final Locale country;
+                if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                    country = this.getResources().getConfiguration().getLocales().get(0);
+                } else {
+                    country = this.getResources().getConfiguration().locale;
+                }
+
+                DownloadListener listener = new DownloadListener() {
+                    @Override
+                    public void onSuccess() {
+                        UserPreferences.setStoredCurrency(mContext, SupportedCountryLab.get(mContext).getCountry(country.getCountry()).getCurrency());
+                    }
+
+                    @Override
+                    public void onFailed() {
+
+                    }
+                };
+                CountryGrabTask countryGrabTask = new CountryGrabTask(mContext, listener);
+                countryGrabTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+                UserPreferences.setStoredLanguage(this,"English");
+
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            prefs.edit().putInt("version", currentVersion).commit();
+            prefs.edit().putInt("version", currentVersion).apply();
         }
-
-        RatesQueryTask ratesQueryTask = new RatesQueryTask(this);
-        ratesQueryTask.execute("CNY");
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        mContext = this;
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -116,27 +139,32 @@ public class MainActivity extends AppCompatActivity {
             public boolean onNavigationItemSelected(MenuItem item) {
                 switch (item.getItemId()) {
                     case R.id.nav_game_all:
-                        QueryPreferences.setStoredQuery(mContext, null);
-                        updateItems();
+                        mGames = GameLab.get(mContext).getGames();
+                        mGameAdapter.setData(mGames);
+                        mGameAdapter.notifyDataSetChanged();
                         getSupportActionBar().setTitle(R.string.nav_all_games);
                         mDrawerLayout.closeDrawers();
                         break;
                     case R.id.nav_game_new:
-                        GameAdapter newGameAdapter = new GameAdapter(mContext, GameLab.get(mContext).getNewGames());
-                        mRecyclerView.setAdapter(newGameAdapter);
+                        mGames = GameLab.get(mContext).getNewGames();
+                        mGameAdapter.setData(mGames);
+                        mGameAdapter.notifyDataSetChanged();
                         getSupportActionBar().setTitle(R.string.nav_not_released_games);
                         mDrawerLayout.closeDrawers();
                         break;
                     case R.id.nav_game_discount:
-                        GameAdapter discountGameAdapter = new GameAdapter(mContext, GameLab.get(mContext).getDiscountGames());
-                        mRecyclerView.setAdapter(discountGameAdapter);
+                        mGames = GameLab.get(mContext).getDiscountGames();
+                        mGameAdapter.setData(mGames);
+                        mGameAdapter.notifyDataSetChanged();
                         getSupportActionBar().setTitle(R.string.nav_discount_games);
                         mDrawerLayout.closeDrawers();
                         break;
                     case  R.id.nav_settings:
-                        getSupportActionBar().setTitle(R.string.nav_settings);
+                        // todo clear the select status
                         mDrawerLayout.closeDrawers();
-                        break;
+                        Intent intent = new Intent(mContext, SettingsActivity.class);
+                        startActivity(intent);
+                        return false;
                     default:
                 }
                 return true;
@@ -163,15 +191,15 @@ public class MainActivity extends AppCompatActivity {
         mGames = GameLab.get(this).getGames();
         FixedPreloadSizeProvider<Game> sizeProvider = new FixedPreloadSizeProvider(500, 250);
         ListPreloader.PreloadModelProvider modelProvider = new MyPreloadModelProvider();
-        RecyclerViewPreloader<Game> preLoader = new RecyclerViewPreloader<>(Glide.with(this), modelProvider, sizeProvider, 30);
+        RecyclerViewPreloader<Game> preLoader = new RecyclerViewPreloader<>(Glide.with(this), modelProvider, sizeProvider, 20);
 
-        mRecyclerView = findViewById(R.id.recycler_view);
+        final RecyclerView mRecyclerView = findViewById(R.id.recycler_view);
         mRecyclerView.addOnScrollListener(preLoader);
         mLayoutManager = new LinearLayoutManager(this);
         mRecyclerView.setLayoutManager(mLayoutManager);
         mRecyclerView.addItemDecoration(new DividerItemDecoration(mRecyclerView.getContext(), mLayoutManager.getOrientation()));
-        GameAdapter adapter = new GameAdapter(this, mGames);
-        mRecyclerView.setAdapter(adapter);
+        mGameAdapter = new GameAdapter(this, mGames);
+        mRecyclerView.setAdapter(mGameAdapter);
         mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
@@ -189,25 +217,20 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        /**
-         *  Below here is test code
-         */
         mFab = findViewById(R.id.fab);
         mFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mRecyclerView.scrollToPosition(0);
+                mRecyclerView.smoothScrollToPosition(0);
             }
         });
+    }
 
-        String countryCode;
-        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            countryCode = this.getResources().getConfiguration().getLocales().toString();
-        } else {
-            countryCode = this.getResources().getConfiguration().locale.getCountry();
-        }
-
-        Log.d("SupportedCountry", countryCode);
+    @Override
+    protected void onResume() {
+        super.onResume();
+        RatesQueryTask ratesQueryTask = new RatesQueryTask(this);
+        ratesQueryTask.execute(UserPreferences.getStoredCurrency(this));
     }
 
     @Override
@@ -305,8 +328,8 @@ public class MainActivity extends AppCompatActivity {
                         } else if (pos.equals(mContext.getString(R.string.nav_discount_games))) {
                             mGames = GameLab.get(mContext).getDiscountGames();
                         }
-                        GameAdapter adapter = new GameAdapter(mContext, mGames);
-                        mRecyclerView.setAdapter(adapter);
+                        mGameAdapter.setData(mGames);
+                        mGameAdapter.notifyDataSetChanged();
 
                         mSwipeRefreshLayout.setRefreshing(false);
                         Toast.makeText(mContext, getResources().getString(R.string.update_success), Toast.LENGTH_SHORT).show();
@@ -319,19 +342,29 @@ public class MainActivity extends AppCompatActivity {
     private void updateItems() {
         String query = QueryPreferences.getStoredQuery(mContext);
         List<Game> games;
+
+        String pos = getSupportActionBar().getTitle().toString();
+        if (pos.equals(mContext.getString(R.string.nav_all_games))) {
+            mGames = GameLab.get(mContext).getGames();
+        } else if (pos.equals(mContext.getString(R.string.nav_not_released_games))) {
+            mGames = GameLab.get(mContext).getNewGames();
+        } else if (pos.equals(mContext.getString(R.string.nav_discount_games))) {
+            mGames = GameLab.get(mContext).getDiscountGames();
+        }
+
         if (query == null) {
-            games = GameLab.get(mContext).getGames();
+            games = mGames;
         } else {
             games = new ArrayList<>();
-            for (Game game : GameLab.get(mContext).getGames()) {
+            for (Game game : mGames) {
                 if (game.getTitle().toLowerCase().contains(query.toLowerCase())) {
                     games.add(game);
                 }
             }
         }
         mGames = games;
-        GameAdapter adapter = new GameAdapter(mContext, mGames);
-        mRecyclerView.setAdapter(adapter);
+        mGameAdapter.setData(mGames);
+        mGameAdapter.notifyDataSetChanged();
     }
 
     public String  CopySqliteFileFromRawToDatabases(String SqliteFileName) throws IOException {

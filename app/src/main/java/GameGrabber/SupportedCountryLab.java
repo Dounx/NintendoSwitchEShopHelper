@@ -19,6 +19,7 @@ public class SupportedCountryLab {
     private static  SupportedCountryLab sSupportedCountryLab;
     private final Context mContext;
     private final SQLiteDatabase mDatabase;
+    public List<SupportedCountry> mCountries;
 
     public static SupportedCountryLab get(Context context) {
         if (sSupportedCountryLab == null) {
@@ -41,6 +42,16 @@ public class SupportedCountryLab {
             }
         }
 
+        return null;
+    }
+
+    public SupportedCountry getCountry(String code) {
+        List<SupportedCountry> list = mCountries;
+        for (SupportedCountry supportedCountry : list) {
+            if (supportedCountry.getCode().equals(code)) {
+                return supportedCountry;
+            }
+        }
         return null;
     }
 

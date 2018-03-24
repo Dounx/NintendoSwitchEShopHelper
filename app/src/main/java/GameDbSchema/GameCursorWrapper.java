@@ -92,8 +92,7 @@ public class GameCursorWrapper extends CursorWrapper {
         game.setIconUrl(icon_url);
         game.setUrl(url);
 
-        DateFormatter formatter = new DateFormatter();
-        game.setReleaseDate(formatter.ParseStringToDate(release_date));
+        game.setReleaseDate(DateFormatter.ParseStringToDate(release_date));
 
         game.setPlayerNumber(player_number);
         game.setCategory(category);

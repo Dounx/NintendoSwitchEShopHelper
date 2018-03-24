@@ -65,6 +65,7 @@ public class RatesQueryTask extends AsyncTask<String, Integer, Integer> {
         try (Response response = client.newCall(request).execute()) {
             String responseData = response.body().string();
             ratesMap = parseRatesJsonData(responseData);
+            ratesMap.put(base, 1.0);    // The response data doesn't have the original currency
         } catch (Exception e) {
             e.printStackTrace();
         }

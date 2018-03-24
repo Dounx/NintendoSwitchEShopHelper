@@ -12,6 +12,7 @@ import android.widget.TextView;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 
 import java.util.List;
+import java.util.Locale;
 
 import GameGrabber.Game;
 import Util.DateFormatter;
@@ -25,7 +26,6 @@ public class GameAdapter extends RecyclerView.Adapter<GameAdapter.ViewHolder> {
         TextView gameName;
         TextView gameReleaseDate;
         TextView gameCategory;
-        TextView gameDiscount;
 
 
         public ViewHolder(View view) {
@@ -35,7 +35,6 @@ public class GameAdapter extends RecyclerView.Adapter<GameAdapter.ViewHolder> {
             gameName = view.findViewById(R.id.game_name);
             gameReleaseDate = view.findViewById(R.id.game_release_date);
             gameCategory = view.findViewById(R.id.game_category);
-            gameDiscount = view.findViewById(R.id.game_discount);
         }
 
         @Override
@@ -77,16 +76,9 @@ public class GameAdapter extends RecyclerView.Adapter<GameAdapter.ViewHolder> {
 
         holder.gameName.setText(title);
 
-        DateFormatter dateFormatter = new DateFormatter();
-        holder.gameReleaseDate.setText(dateFormatter.ParseDateToString(game.getReleaseDate()));
+        holder.gameReleaseDate.setText(DateFormatter.ParseDateToString(game.getReleaseDate(), Locale.getDefault()));
 
         holder.gameCategory.setText(game.getCategory());
-
-        if (game.isDiscount()) {
-            holder.gameDiscount.setText("Have discount");
-        } else {
-            holder.gameDiscount.setText("");
-        }
 
         GlideApp.with(mContext)
                 .load(game.getIconUrl())
@@ -99,5 +91,9 @@ public class GameAdapter extends RecyclerView.Adapter<GameAdapter.ViewHolder> {
     @Override
     public int getItemCount() {
         return mGameList.size();
+    }
+
+    public void setData(List<Game> newGameList){
+        this.mGameList = newGameList;
     }
 }

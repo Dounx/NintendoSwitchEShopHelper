@@ -17,6 +17,7 @@ import android.widget.TextView;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 
 import java.util.List;
+import java.util.Locale;
 
 import GameGrabber.DownloadListener;
 import GameGrabber.Game;
@@ -25,11 +26,14 @@ import GameGrabber.PriceQueryTask;
 import GameGrabber.SupportedCountry;
 import GameGrabber.SupportedCountryLab;
 import Util.DateFormatter;
+import Util.QueryPreferences;
+import Util.UserPreferences;
 
 public class GamePageActivity extends AppCompatActivity {
     public static final String EXTRA_GAME_TITLE = "me.dounx.android.nintendoeshophelper.game_title";
     private PriceQueryTask mPriceQueryTask;
     private Game mGame;
+    private Context mContext;
 
     public static Intent  newIntent(Context packageContext, String title) {
         Intent intent = new Intent(packageContext, GamePageActivity.class);
@@ -41,6 +45,8 @@ public class GamePageActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game_page);
+        mContext = this;
+
         String title = (String)getIntent().getSerializableExtra(EXTRA_GAME_TITLE);
 
         Toolbar toolbar = findViewById(R.id.game_page_toolbar);
@@ -88,8 +94,7 @@ public class GamePageActivity extends AppCompatActivity {
 
         TextView gamePageReleaseDate = findViewById(R.id.game_page_release_date);
 
-        DateFormatter dateFormatter = new DateFormatter();
-        gamePageReleaseDate.setText(dateFormatter.ParseDateToString(mGame.getReleaseDate()));
+        gamePageReleaseDate.setText(DateFormatter.ParseDateToString(mGame.getReleaseDate(), Locale.getDefault()));
 
         TextView gamePageLanguage = findViewById(R.id.game_page_language);
         gamePageLanguage.setText(mGame.getLanguage());
@@ -119,15 +124,14 @@ public class GamePageActivity extends AppCompatActivity {
 
                     gamePagePrice.getPaint().setFlags(Paint.STRIKE_THRU_TEXT_FLAG );
 
-                    gamePageDiscountPrice.setText(mGame.getPrice().getDiscountPriceByCurrency() + " CNY");
+                    gamePageDiscountPrice.setText(mGame.getPrice().getDiscountPriceByCurrency() + " " + UserPreferences.getStoredCurrency(mContext));
                     gamePageDiscountNum.setText(mGame.getPrice().getDiscount() + getString(R.string.off));
 
-                    DateFormatter formatter = new DateFormatter();
-                    gamePageStartTime.setText(formatter.ParseDateToString(mGame.getPrice().getStartTime()));
-                    gamePageEndTime.setText(formatter.ParseDateToString(mGame.getPrice().getEndTime()));
+                    gamePageStartTime.setText(DateFormatter.ParseDateToString(mGame.getPrice().getStartTime(), Locale.getDefault()));
+                    gamePageEndTime.setText(DateFormatter.ParseDateToString(mGame.getPrice().getEndTime(), Locale.getDefault()));
                 }
 
-                gamePagePrice.setText(mGame.getPrice().getPriceByCurrency() + " CNY ");
+                gamePagePrice.setText(mGame.getPrice().getPriceByCurrency() + " " + UserPreferences.getStoredCurrency(mContext));
                 gamePageCountry.setText(mGame.getPrice().getCountryName());
                 progressBar.setVisibility(View.GONE);
                 progress_info.setVisibility(View.GONE);

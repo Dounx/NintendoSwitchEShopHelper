@@ -9,7 +9,7 @@ import java.util.Locale;
  */
 
 public class DateFormatter {
-    public Date ParseStringToDate(String dateString) {
+    public static Date ParseStringToDate(String dateString) {
         SimpleDateFormat dateFormatUS = new SimpleDateFormat("MMM d, yyyy", Locale.US);
         SimpleDateFormat dateFormatEU = new SimpleDateFormat("yyyy-mm-dd", Locale.ENGLISH);
         SimpleDateFormat dateFormatJP = new SimpleDateFormat("yyyy.m.d", Locale.JAPAN);
@@ -31,8 +31,8 @@ public class DateFormatter {
         return date;
     }
 
-    public String ParseDateToString(Date date) {
-        SimpleDateFormat dateFormat = new SimpleDateFormat("MMM d, yyyy");
+    public static String ParseDateToString(Date date, Locale locale) {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("MMM d, yyyy", locale);
         return dateFormat.format(date);
     }
 }
