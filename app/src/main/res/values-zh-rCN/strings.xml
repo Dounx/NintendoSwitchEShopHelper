@@ -1,0 +1,130 @@
+<resources>
+    <string name="app_name">NintendoEShopHelper</string>
+    <string name="nav_settings">设置</string>
+    <string name="mail">imdounx@gmail.com</string>
+    <string name="username">Dounx</string>
+    <string name="search">搜索</string>
+    <string name="nav_all_games">所有游戏</string>
+    <string name="nav_not_released_games">未发售游戏</string>
+    <string name="nav_discount_games">打折游戏</string>
+    <string name="all_games">所有游戏</string>
+    <string name="update_success">更新成功</string>
+    <string name="category">分类：</string>
+    <string name="lowest_price">最低价格：</string>
+    <string name="language">支持语言：</string>
+    <string name="player_number">玩家人数：</string>
+    <string name="release_date">发售日期：</string>
+    <string name="loading">加载中...</string>
+    <string name="country">国家：</string>
+    <string name="failed">失败！</string>
+    <string name="getting_price_from">获取价格从</string>
+    <string name="start_time">起始时间：</string>
+    <string name="end_time">结束时间</string>
+    <string name="have_discount">有折扣！</string>
+    <string name="off">OFF</string>
+    <string name="title_activity_settings">设置</string>
+    <string name="restart">重启</string>
+    <string name="restart_info">切换语言需要重启应用。</string>
+    <string name="ok">确认</string>
+    <string name="cancel">取消</string>
+    <string name="update_game">更新游戏</string>
+    <string name="update_rate">更新汇率</string>
+    <string name="update_country">更新国家</string>
+
+    <string name="general_settings">通用设置</string>
+    <string name="choose_language">选择语言</string>
+    <string name="choose_language_summary">选择所显示的语言。</string>
+    <string name="choose_currency">选择货币</string>
+    <string name="choose_currency_summary">选择要转化成的货币。</string>
+    <string name="update_data">更新数据</string>
+    <string name="update_game_info">更新游戏</string>
+    <string name="update_game_info_summary">更新游戏列表，包含美服，亚服以及欧服的全部游戏数据，等同于在首界面下拉。</string>
+    <string name="update_rate_info">更新汇率</string>
+    <string name="update_rate_info_summary">更新最新的汇率信息，在应用启动时已经自动获取过一次。</string>
+    <string name="update_support_country">更新国家</string>
+    <string name="update_support_country_summary">这将会花费很长的时间更新国家列表，仅当有新的国家开放服务器时点击更新。</string>
+    <string name="about">关于</string>
+    <string name="github_title">Github</string>
+    <string name="github">https://github.com/Dounx/NintendoEShopHelper</string>
+
+    <array name="language_entries">
+        <item>English</item>
+        <item>中文</item>
+    </array>
+
+    <array name="language_entry_values">
+        <item>English</item>
+        <item>Chinese</item>
+    </array>
+
+    <array name="currency_entries">
+        <item>AUD</item>
+        <item>BGN</item>
+        <item>BRL</item>
+        <item>CAD</item>
+        <item>CHF</item>
+        <item>CNY</item>
+        <item>CZK</item>
+        <item>DKK</item>
+        <item>GBP</item>
+        <item>HKD</item>
+        <item>HRK</item>
+        <item>HUF</item>
+        <item>IDR</item>
+        <item>ILS</item>
+        <item>INR</item>
+        <item>ISK</item>
+        <item>JPY</item>
+        <item>KRW</item>
+        <item>MXN</item>
+        <item>MYR</item>
+        <item>NOK</item>
+        <item>NZD</item>
+        <item>PHP</item>
+        <item>PLN</item>
+        <item>RON</item>
+        <item>RUB</item>
+        <item>SEK</item>
+        <item>SGD</item>
+        <item>THB</item>
+        <item>TRY</item>
+        <item>USD</item>
+        <item>ZAR</item>
+    </array>
+
+    <array name="currency_entry_values">
+        <item>AUD</item>
+        <item>BGN</item>
+        <item>BRL</item>
+        <item>CAD</item>
+        <item>CHF</item>
+        <item>CNY</item>
+        <item>CZK</item>
+        <item>DKK</item>
+        <item>GBP</item>
+        <item>HKD</item>
+        <item>HRK</item>
+        <item>HUF</item>
+        <item>IDR</item>
+        <item>ILS</item>
+        <item>INR</item>
+        <item>ISK</item>
+        <item>JPY</item>
+        <item>KRW</item>
+        <item>MXN</item>
+        <item>MYR</item>
+        <item>NOK</item>
+        <item>NZD</item>
+        <item>PHP</item>
+        <item>PLN</item>
+        <item>RON</item>
+        <item>RUB</item>
+        <item>SEK</item>
+        <item>SGD</item>
+        <item>THB</item>
+        <item>TRY</item>
+        <item>USD</item>
+        <item>ZAR</item>
+    </array>
+
+</resources>

@@ -44,6 +44,7 @@ public class GamePageActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        ActivityCollector.addActivity(this);
         setContentView(R.layout.activity_game_page);
         mContext = this;
 
@@ -77,7 +78,6 @@ public class GamePageActivity extends AppCompatActivity {
 
         if (mGame.isDiscount()) {
             TextView gamePageDiscountPrice = findViewById(R.id.game_page_discount_price);
-            TextView gamePageDiscount = findViewById(R.id.game_page_discount);
             TextView gamePageDiscountNum = findViewById(R.id.game_page_discount_num);
             TextView gamePageStartTime = findViewById(R.id.game_page_start_time);
             TextView gamePageEndTime = findViewById(R.id.game_page_end_time);
@@ -87,9 +87,7 @@ public class GamePageActivity extends AppCompatActivity {
             gamePageDiscountNum.setVisibility(View.VISIBLE);
             gamePageStartTime.setVisibility(View.VISIBLE);
             gamePageEndTime.setVisibility(View.VISIBLE);
-            gamePageDiscount.setVisibility(View.VISIBLE);
             gamePageDiscountTime.setVisibility(View.VISIBLE);
-            gamePageDiscount.setText(getString(R.string.have_discount));
         }
 
         TextView gamePageReleaseDate = findViewById(R.id.game_page_release_date);
@@ -155,5 +153,6 @@ public class GamePageActivity extends AppCompatActivity {
         if (mPriceQueryTask.getStatus() == AsyncTask.Status.RUNNING) {
             mPriceQueryTask.cancel(true);
         }
+        ActivityCollector.removeActivity(this);
     }
 }

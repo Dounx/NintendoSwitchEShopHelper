@@ -1,20 +1,24 @@
 package me.dounx.nintendoeshophelper;
 
+import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.Configuration;
+import android.content.res.Resources;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceScreen;
-import android.view.Gravity;
-import android.view.LayoutInflater;
+import android.util.DisplayMetrics;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.FrameLayout;
 import android.widget.ProgressBar;
-import android.widget.RelativeLayout;
 import android.widget.Toast;
+
+import java.util.Locale;
 
 import GameGrabber.EUGameGrabTask;
 import GameGrabber.JPGameGrabTask;
@@ -32,6 +36,7 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
     private PreferenceScreen mScreen = null;
     private Context mContext = null;
     private ProgressBar mProgressBar = null;
+    private ProgressDialog mProgressDialog = null;
 
     public SettingsFragment() {
 
@@ -43,7 +48,7 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
         this.addPreferencesFromResource(R.xml.preference);
 
         mScreen = getPreferenceScreen();
-        mContext = getActivity().getApplicationContext();
+        mContext = getActivity();
         mProgressBar =  getActivity().findViewById(R.id.settings_progress_bar);
 
         final Preference updateGame = findPreference("update_game_info");
@@ -91,14 +96,46 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String s) {
 
+        if (s.equals("language")) {
+            Resources resources =getResources();
+            Configuration config = resources.getConfiguration();
+            DisplayMetrics dm = resources.getDisplayMetrics();
+
+            if (UserPreferences.getStoredLanguage(mContext).equals("Chinese")) {
+                config.locale = Locale.CHINA;
+            } else if (UserPreferences.getStoredLanguage(mContext).equals("English")) {
+                config.locale = Locale.US;
+            }
+            resources.updateConfiguration(config, dm);
+
+            AlertDialog.Builder dialog = new AlertDialog.Builder(mContext);
+            dialog.setTitle(getString(R.string.restart));
+            dialog.setMessage(getString(R.string.restart_info));
+            dialog.setCancelable(true);
+            dialog.setPositiveButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    Intent intent = new Intent(mContext, MainActivity.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    mContext.startActivity(intent);
+                    android.os.Process.killProcess(android.os.Process.myPid());
+                }
+            });
+            dialog.setNegativeButton(getString(R.string.cancel), new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+
+                }
+            });
+            dialog.show();
+        }
+
     }
 
     private void updateGame() {
         final USGameGrabTask usGameGrabTask = new USGameGrabTask(mContext);
         final EUGameGrabTask euGameGrabTask = new EUGameGrabTask(mContext);
         final JPGameGrabTask jpGameGrabTask = new JPGameGrabTask(mContext);
-
-        mProgressBar.setVisibility(View.VISIBLE);
 
         usGameGrabTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
         euGameGrabTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
@@ -114,18 +151,18 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
                 getActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        mProgressBar.setVisibility(View.GONE);
+                        mProgressDialog.dismiss();
                         Toast.makeText(mContext, getResources().getString(R.string.update_success), Toast.LENGTH_SHORT).show();
                     }
                 });
             }
         }).start();
+
+        showProgressDialog(getString(R.string.update_game), euGameGrabTask);
     }
 
-    void updateRate() {
+    private void updateRate() {
         final RatesQueryTask ratesQueryTask = new RatesQueryTask(mContext);
-
-        mProgressBar.setVisibility(View.VISIBLE);
 
         ratesQueryTask.execute(UserPreferences.getStoredCurrency(mContext));
 
@@ -137,18 +174,18 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
                 getActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        mProgressBar.setVisibility(View.GONE);
+                        mProgressDialog.dismiss();
                         Toast.makeText(mContext, getResources().getString(R.string.update_success), Toast.LENGTH_SHORT).show();
                     }
                 });
             }
         }).start();
+
+        showProgressDialog(getString(R.string.update_rate), ratesQueryTask);
     }
 
-    void updateCountry() {
+    private void updateCountry() {
         final SupportedCountryGrabTask supportedCountryGrabTask = new SupportedCountryGrabTask(mContext);
-
-        mProgressBar.setVisibility(View.VISIBLE);
 
         supportedCountryGrabTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 
@@ -160,11 +197,30 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
                 getActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        mProgressBar.setVisibility(View.GONE);
+                        mProgressDialog.dismiss();
                         Toast.makeText(mContext, getResources().getString(R.string.update_success), Toast.LENGTH_SHORT).show();
                     }
                 });
             }
         }).start();
+
+        showProgressDialog(getString(R.string.update_country), supportedCountryGrabTask);
+    }
+
+    private void showProgressDialog(String title, final AsyncTask task) {
+        ProgressDialog progressDialog = new ProgressDialog(getActivity());
+        progressDialog.setTitle(title);
+        progressDialog.setMessage(getString(R.string.loading));
+        progressDialog.setCancelable(true);
+        progressDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
+            @Override
+            public void onCancel(DialogInterface dialogInterface) {
+                if (task.getStatus() == AsyncTask.Status.RUNNING) {
+                    task.cancel(true);
+                }
+            }
+        });
+        mProgressDialog = progressDialog;
+        progressDialog.show();
     }
 }

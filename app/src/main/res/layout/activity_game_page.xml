@@ -36,16 +36,15 @@
 
         <TextView
             android:layout_width="wrap_content"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:layout_marginRight="8dp"
             android:textSize="18sp"
             android:text="@string/category"/>
 
         <TextView
             android:id="@+id/game_page_category"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:textSize="18sp"
             tools:text="Category" />
     </LinearLayout>
@@ -58,7 +57,7 @@
 
         <TextView
             android:layout_width="wrap_content"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:layout_marginRight="8dp"
             android:textSize="18sp"
             android:text="@string/country" />
@@ -66,21 +65,20 @@
         <TextView
             android:id="@+id/game_page_country"
             android:layout_width="wrap_content"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:layout_marginRight="8dp"
             android:textSize="18sp"
             android:textColor="@android:color/holo_red_light"
             android:hint="@string/loading" />
 
         <TextView
-            android:id="@+id/game_page_discount"
+            android:id="@+id/game_page_discount_num"
             android:layout_width="wrap_content"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:visibility="gone"
-            android:gravity="center_vertical"
             android:textSize="18sp"
             android:textColor="@android:color/holo_red_light"
-            tools:text="Have Discount" />
+            tools:text="XX% OFF"/>
 
     </LinearLayout>
 
@@ -92,17 +90,15 @@
 
         <TextView
             android:layout_width="wrap_content"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:layout_marginRight="8dp"
-            android:gravity="center_vertical"
             android:textSize="18sp"
             android:text="@string/lowest_price"/>
 
         <TextView
             android:id="@+id/game_page_price"
             android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:gravity="center_vertical"
+            android:layout_height="wrap_content"
             android:layout_marginRight="8dp"
             android:textSize="18sp"
             android:textColor="@android:color/holo_red_light"
@@ -112,22 +108,11 @@
         <TextView
             android:id="@+id/game_page_discount_price"
             android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_marginRight="8dp"
+            android:layout_height="wrap_content"
             android:visibility="gone"
             android:textSize="18sp"
             android:textColor="@android:color/holo_red_light"
             tools:text="Discount Price" />
-
-        <TextView
-            android:id="@+id/game_page_discount_num"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:visibility="gone"
-            android:gravity="center_vertical"
-            android:textSize="18sp"
-            android:textColor="@android:color/holo_red_light"
-            tools:text="XX% OFF"/>
 
     </LinearLayout>
 
@@ -135,42 +120,55 @@
         android:id="@+id/game_page_discount_time"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:orientation="vertical"
         android:layout_marginLeft="8dp"
-        android:layout_marginTop="8dp"
         android:visibility="gone">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_marginRight="8dp"
-            android:textSize="18sp"
-            android:text="@string/start_time"/>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp">
 
-        <TextView
-            android:id="@+id/game_page_start_time"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_marginRight="8dp"
-            android:textSize="18sp"
-            android:textColor="@android:color/holo_red_light"
-            android:hint="@string/loading"
-            tools:text="Start Time" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="8dp"
+                android:textSize="18sp"
+                android:text="@string/start_time"/>
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_marginRight="8dp"
-            android:textSize="18sp"
-            android:text="@string/end_time"/>
+            <TextView
+                android:id="@+id/game_page_start_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="18sp"
+                android:textColor="@android:color/holo_red_light"
+                android:hint="@string/loading"
+                tools:text="Start Time" />
 
-        <TextView
-            android:id="@+id/game_page_end_time"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:textSize="18sp"
-            android:textColor="@android:color/holo_red_light"
-            android:hint="@string/loading"
-            tools:text="End Time" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="8dp"
+                android:textSize="18sp"
+                android:text="@string/end_time"/>
+
+            <TextView
+                android:id="@+id/game_page_end_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="18sp"
+                android:textColor="@android:color/holo_red_light"
+                android:hint="@string/loading"
+                tools:text="End Time" />
+
+        </LinearLayout>
 
     </LinearLayout>
 
@@ -182,16 +180,15 @@
 
         <TextView
             android:layout_width="wrap_content"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:layout_marginRight="8dp"
             android:textSize="18sp"
             android:text="@string/language"/>
 
         <TextView
             android:id="@+id/game_page_language"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
             android:textSize="18sp"
             tools:text="Language" />
 
@@ -205,16 +202,15 @@
 
         <TextView
             android:layout_width="wrap_content"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:layout_marginRight="8dp"
             android:textSize="18sp"
             android:text="@string/player_number"/>
 
         <TextView
             android:id="@+id/game_page_player_number"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
             android:textSize="18sp"
             tools:text="Player Number" />
 
@@ -228,16 +224,15 @@
 
         <TextView
             android:layout_width="wrap_content"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:layout_marginRight="8dp"
             android:textSize="18sp"
             android:text="@string/release_date"/>
 
         <TextView
             android:id="@+id/game_page_release_date"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
             android:textSize="18sp"
             tools:text="Release Date" />
 

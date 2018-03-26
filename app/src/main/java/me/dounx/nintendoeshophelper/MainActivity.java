@@ -5,6 +5,8 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.content.res.Configuration;
+import android.content.res.Resources;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.StrictMode;
@@ -24,6 +26,7 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
+import android.util.DisplayMetrics;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -124,7 +127,19 @@ public class MainActivity extends AppCompatActivity {
             prefs.edit().putInt("version", currentVersion).apply();
         }
 
+        // Set up the language
+        Resources resources =getResources();
+        Configuration config = resources.getConfiguration();
+        DisplayMetrics dm = resources.getDisplayMetrics();
+        if (UserPreferences.getStoredLanguage(mContext).equals("Chinese")) {
+            config.locale = Locale.CHINA;
+        } else {
+            config.locale = Locale.US;
+        }
+        resources.updateConfiguration(config, dm);
+
         super.onCreate(savedInstanceState);
+        ActivityCollector.addActivity(this);
         setContentView(R.layout.activity_main);
 
         Toolbar toolbar = findViewById(R.id.toolbar);
@@ -231,6 +246,13 @@ public class MainActivity extends AppCompatActivity {
         super.onResume();
         RatesQueryTask ratesQueryTask = new RatesQueryTask(this);
         ratesQueryTask.execute(UserPreferences.getStoredCurrency(this));
+    }
+
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        ActivityCollector.removeActivity(this);
     }
 
     @Override
