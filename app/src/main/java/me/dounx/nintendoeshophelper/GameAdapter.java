@@ -76,7 +76,7 @@ public class GameAdapter extends RecyclerView.Adapter<GameAdapter.ViewHolder> {
 
         holder.gameName.setText(title);
 
-        holder.gameReleaseDate.setText(DateFormatter.ParseDateToString(game.getReleaseDate(), Locale.getDefault()));
+        holder.gameReleaseDate.setText(DateFormatter.ParseDateToString(game.getReleaseDate(), Locale.getDefault(), mContext));
 
         holder.gameCategory.setText(game.getCategory());
 

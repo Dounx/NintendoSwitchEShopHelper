@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 
 import Util.DateFormatter;
@@ -39,6 +40,7 @@ public class PriceQueryTask extends AsyncTask<Game, Integer, Integer> {
     private DownloadListener mListener;
     private ProgressBar mProgressBar;
     private TextView mProgressInfo;
+    private List<SupportedCountry> mCountries = new ArrayList<>();    // For showing progress
 
     public PriceQueryTask(Context context, DownloadListener listener, ProgressBar progressBar, TextView progressInfo) {
         this.mContext = context;
@@ -76,6 +78,10 @@ public class PriceQueryTask extends AsyncTask<Game, Integer, Integer> {
             }
         }
 
+        mCountries.addAll(usCountryList);
+        mCountries.addAll(euCountryList);
+        mCountries.addAll(jpCountryList);
+
         String usNsuid = mGame.getUsNsUid();
         String euNsuid = mGame.getEuNsUid();
         String jpNsuid = mGame.getJpNsUid();
@@ -107,15 +113,20 @@ public class PriceQueryTask extends AsyncTask<Game, Integer, Integer> {
             return TYPE_FAILED;
         }
 
-        for (Price price : priceList) {
-
+        Iterator<Price> iterator = priceList.iterator();
+        while (iterator.hasNext()){
+            Price price = iterator.next();
             String currency = price.getCurrency();
-            double rates = ratesMap.get(currency);
-            if (price.getDiscountPrice() != null) {
-                price.setDiscount(String.valueOf(String.format("%.0f", (1 - Double.parseDouble(price.getDiscountPrice()) / Double.parseDouble(price.getPrice())) * 100)) + "%");
-                price.setDiscountPriceByCurrency(String.valueOf(String.format("%.2f", Double.parseDouble(price.getDiscountPrice()) / rates)));
+            if (currency == null) {
+                iterator.remove();
+            } else {
+                double rates = ratesMap.get(currency);
+                if (price.getDiscountPrice() != null) {
+                    price.setDiscount(String.valueOf(String.format("%.0f", (1 - Double.parseDouble(price.getDiscountPrice()) / Double.parseDouble(price.getPrice())) * 100)) + "%");
+                    price.setDiscountPriceByCurrency(String.valueOf(String.format("%.2f", Double.parseDouble(price.getDiscountPrice()) / rates)));
+                }
+                price.setPriceByCurrency(String.valueOf(String.format("%.2f", Double.parseDouble(price.getPrice()) / rates)));  // Round it to 2 decimal places
             }
-            price.setPriceByCurrency(String.valueOf(String.format("%.2f", Double.parseDouble(price.getPrice()) / rates)));  // Round it to 2 decimal places
         }
 
         /*Iterator<Price> iterator = priceList.iterator();
@@ -166,12 +177,12 @@ public class PriceQueryTask extends AsyncTask<Game, Integer, Integer> {
     @Override
     protected void onProgressUpdate(Integer... values) {
         super.onProgressUpdate(values);
+        mProgressBar.setMax(mCountries.size());
         if (UserPreferences.getStoredLanguage(mContext).equals("Chinese")) {
-            mProgressInfo.setText("从" + " " + mSupportedCountryLab.getSupportedCountries().get(mProgressBar.getProgress()).getName() +  " " + mContext.getString(R.string.getting_price_from));
+            mProgressInfo.setText("从" + " " + mCountries.get(mProgressBar.getProgress()).getName() +  " " + mContext.getString(R.string.getting_price_from));
         } else {
-            mProgressInfo.setText(mContext.getString(R.string.getting_price_from) + " " + mSupportedCountryLab.getSupportedCountries().get(mProgressBar.getProgress()).getName());
+            mProgressInfo.setText(mContext.getString(R.string.getting_price_from) + " " + mCountries.get(mProgressBar.getProgress()).getName());
         }
-
         mProgressBar.setProgress(mProgressBar.getProgress() + 1);
     }
 
@@ -232,7 +243,7 @@ public class PriceQueryTask extends AsyncTask<Game, Integer, Integer> {
             JSONArray pricesArray = jsonObject.getJSONArray("prices");
             JSONObject priceObject = pricesArray.getJSONObject(0);
 
-            if (priceObject.getString("sales_status").equals("onsale")  || priceObject.getString("sales_status").equals("preorder")) {
+            if (priceObject.has("regular_price")) {
                 JSONObject regularPriceObject = priceObject.getJSONObject("regular_price");
 
                 price.setPrice(regularPriceObject.getString("raw_value"));

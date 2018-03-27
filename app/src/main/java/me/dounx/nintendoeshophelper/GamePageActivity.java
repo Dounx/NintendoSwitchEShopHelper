@@ -94,7 +94,7 @@ public class GamePageActivity extends AppCompatActivity {
 
         TextView gamePageReleaseDate = findViewById(R.id.game_page_release_date);
 
-        gamePageReleaseDate.setText(DateFormatter.ParseDateToString(mGame.getReleaseDate(), Locale.getDefault()));
+        gamePageReleaseDate.setText(DateFormatter.ParseDateToString(mGame.getReleaseDate(), Locale.getDefault(), mContext));
 
         TextView gamePageLanguage = findViewById(R.id.game_page_language);
         gamePageLanguage.setText(mGame.getLanguage());
@@ -127,8 +127,15 @@ public class GamePageActivity extends AppCompatActivity {
                         gamePagePrice.getPaint().setFlags(Paint.STRIKE_THRU_TEXT_FLAG );    // Add a line in it
                         gamePageDiscountPrice.setText(mGame.getPrice().getDiscountPriceByCurrency() + " " + UserPreferences.getStoredCurrency(mContext));
                         gamePageDiscountNum.setText(mGame.getPrice().getDiscount() + getString(R.string.off));
-                        gamePageStartTime.setText(DateFormatter.ParseDateToString(mGame.getPrice().getStartTime(), Locale.getDefault()));
-                        gamePageEndTime.setText(DateFormatter.ParseDateToString(mGame.getPrice().getEndTime(), Locale.getDefault()));
+
+                        Locale locale;
+                        if (UserPreferences.getStoredLanguage(mContext).equals("Chinese")) {
+                            locale = Locale.CHINA;
+                        } else {
+                            locale = Locale.US;
+                        }
+                        gamePageStartTime.setText(DateFormatter.ParseDateToString(mGame.getPrice().getStartTime(), locale, mContext));
+                        gamePageEndTime.setText(DateFormatter.ParseDateToString(mGame.getPrice().getEndTime(), locale, mContext));
                     } else {
                         gamePageDiscountTime.setVisibility(View.GONE);
                         gamePageStartTime.setVisibility(View.GONE);
@@ -148,7 +155,11 @@ public class GamePageActivity extends AppCompatActivity {
             public void onFailed() {
                 gamePagePrice.setText(R.string.failed);
                 gamePageCountry.setText(R.string.failed);
-                Toast.makeText(mContext, getString(R.string.network_error), Toast.LENGTH_LONG).show();
+                if (mGame.getGameCode() == null || mGame.getUsNsUid() == null && (mGame.getEuNsUid() == null && mGame.getJpNsUid() == null)) {
+                    Toast.makeText(mContext, getString(R.string.not_exist), Toast.LENGTH_LONG).show();
+                } else {
+                    Toast.makeText(mContext, getString(R.string.network_error), Toast.LENGTH_LONG).show();
+                }
                 progressBar.setVisibility(View.GONE);
                 progress_info.setVisibility(View.GONE);
             }

@@ -33,6 +33,7 @@
     <string name="network_error">网络错误，请检查你的网络并重试。</string>
     <string name="unknow">未知</string>
     <string name="discount_useless">这个游戏不打折的售价居然比打折便宜!</string>
+    <string name="not_exist">这个游戏没有任何信息。</string>
 
     <string name="general_settings">通用设置</string>
     <string name="choose_language">选择语言</string>

@@ -1,5 +1,7 @@
 package Util;
 
+import android.content.Context;
+
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
@@ -31,8 +33,13 @@ public class DateFormatter {
         return date;
     }
 
-    public static String ParseDateToString(Date date, Locale locale) {
-        SimpleDateFormat dateFormat = new SimpleDateFormat("MMM d, yyyy", locale);
+    public static String ParseDateToString(Date date, Locale locale, Context context) {
+        SimpleDateFormat dateFormat;
+        if (UserPreferences.getStoredLanguage(context).equals("Chinese")) {
+            dateFormat = new SimpleDateFormat("yyyy MMM d", locale);
+        } else {
+            dateFormat = new SimpleDateFormat("MMM d, yyyy", locale);
+        }
         return dateFormat.format(date);
     }
 }
