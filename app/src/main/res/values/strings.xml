@@ -30,6 +30,8 @@
     <string name="update_game">Update Game</string>
     <string name="update_rate">Update Rate</string>
     <string name="update_country">Update Country</string>
+    <string name="network_error">Network Error, Please check your network and retry.</string>
+    <string name="discount_useless">This game does not discount the price actually cheaper than the discount.</string>
 
     <string name="general_settings">General Settings</string>
     <string name="choose_language">Choose Language</string>

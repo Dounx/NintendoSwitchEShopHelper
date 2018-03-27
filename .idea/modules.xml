@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/NintendoSwitchEShopHelper.iml" filepath="$PROJECT_DIR$/NintendoSwitchEShopHelper.iml" />
+      <module fileurl="file://$PROJECT_DIR$/NintendoEShopHelper.iml" filepath="$PROJECT_DIR$/NintendoEShopHelper.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
     </modules>
   </component>

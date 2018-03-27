@@ -17,9 +17,9 @@
     <string name="loading">加载中...</string>
     <string name="country">国家：</string>
     <string name="failed">失败！</string>
-    <string name="getting_price_from">获取价格从</string>
+    <string name="getting_price_from">获取价格</string>
     <string name="start_time">起始时间：</string>
-    <string name="end_time">结束时间</string>
+    <string name="end_time">结束时间：</string>
     <string name="have_discount">有折扣！</string>
     <string name="off">OFF</string>
     <string name="title_activity_settings">设置</string>
@@ -30,6 +30,9 @@
     <string name="update_game">更新游戏</string>
     <string name="update_rate">更新汇率</string>
     <string name="update_country">更新国家</string>
+    <string name="network_error">网络错误，请检查你的网络并重试。</string>
+    <string name="unknow">未知</string>
+    <string name="discount_useless">这个游戏不打折的售价居然比打折便宜!</string>
 
     <string name="general_settings">通用设置</string>
     <string name="choose_language">选择语言</string>

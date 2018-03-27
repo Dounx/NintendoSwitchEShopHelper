@@ -15,6 +15,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import Util.DateFormatter;
+import Util.UserPreferences;
 import me.dounx.nintendoeshophelper.R;
 import okhttp3.HttpUrl;
 import okhttp3.OkHttpClient;
@@ -107,7 +108,9 @@ public class PriceQueryTask extends AsyncTask<Game, Integer, Integer> {
         }
 
         for (Price price : priceList) {
-            double rates = ratesMap.get(price.getCurrency());
+
+            String currency = price.getCurrency();
+            double rates = ratesMap.get(currency);
             if (price.getDiscountPrice() != null) {
                 price.setDiscount(String.valueOf(String.format("%.0f", (1 - Double.parseDouble(price.getDiscountPrice()) / Double.parseDouble(price.getPrice())) * 100)) + "%");
                 price.setDiscountPriceByCurrency(String.valueOf(String.format("%.2f", Double.parseDouble(price.getDiscountPrice()) / rates)));
@@ -163,7 +166,12 @@ public class PriceQueryTask extends AsyncTask<Game, Integer, Integer> {
     @Override
     protected void onProgressUpdate(Integer... values) {
         super.onProgressUpdate(values);
-        mProgressInfo.setText(mContext.getString(R.string.getting_price_from) + " " + mSupportedCountryLab.getSupportedCountries().get(mProgressBar.getProgress()).getName());
+        if (UserPreferences.getStoredLanguage(mContext).equals("Chinese")) {
+            mProgressInfo.setText("从" + " " + mSupportedCountryLab.getSupportedCountries().get(mProgressBar.getProgress()).getName() +  " " + mContext.getString(R.string.getting_price_from));
+        } else {
+            mProgressInfo.setText(mContext.getString(R.string.getting_price_from) + " " + mSupportedCountryLab.getSupportedCountries().get(mProgressBar.getProgress()).getName());
+        }
+
         mProgressBar.setProgress(mProgressBar.getProgress() + 1);
     }
 
@@ -194,12 +202,11 @@ public class PriceQueryTask extends AsyncTask<Game, Integer, Integer> {
                 parseData = parsePriceJsonData(responseData);
                 if (parseData != null) {
                     priceList.add(parseData);
-                } else {
-                    return null;
                 }
                 publishProgress();    // Update the progress
             } catch (Exception e) {
                 e.printStackTrace();
+                return null;
             }
         }
         return priceList;

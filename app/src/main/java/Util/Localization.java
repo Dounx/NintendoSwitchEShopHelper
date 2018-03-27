@@ -2,10 +2,6 @@ package Util;
 
 import java.util.HashMap;
 
-/**
- * Created by Dounx on 2018/3/26.
- */
-
 public class Localization {
     private static HashMap<String, String> sChineseMap = new HashMap<>();
 

@@ -13,9 +13,11 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
@@ -119,14 +121,22 @@ public class GamePageActivity extends AppCompatActivity {
                     TextView gamePageStartTime = findViewById(R.id.game_page_start_time);
                     TextView gamePageEndTime = findViewById(R.id.game_page_end_time);
                     TextView gamePagePrice = findViewById(R.id.game_page_price);
+                    LinearLayout gamePageDiscountTime = findViewById(R.id.game_page_discount_time);
 
-                    gamePagePrice.getPaint().setFlags(Paint.STRIKE_THRU_TEXT_FLAG );
-
-                    gamePageDiscountPrice.setText(mGame.getPrice().getDiscountPriceByCurrency() + " " + UserPreferences.getStoredCurrency(mContext));
-                    gamePageDiscountNum.setText(mGame.getPrice().getDiscount() + getString(R.string.off));
-
-                    gamePageStartTime.setText(DateFormatter.ParseDateToString(mGame.getPrice().getStartTime(), Locale.getDefault()));
-                    gamePageEndTime.setText(DateFormatter.ParseDateToString(mGame.getPrice().getEndTime(), Locale.getDefault()));
+                    if (mGame.getPrice().getStartTime() != null) {
+                        gamePagePrice.getPaint().setFlags(Paint.STRIKE_THRU_TEXT_FLAG );    // Add a line in it
+                        gamePageDiscountPrice.setText(mGame.getPrice().getDiscountPriceByCurrency() + " " + UserPreferences.getStoredCurrency(mContext));
+                        gamePageDiscountNum.setText(mGame.getPrice().getDiscount() + getString(R.string.off));
+                        gamePageStartTime.setText(DateFormatter.ParseDateToString(mGame.getPrice().getStartTime(), Locale.getDefault()));
+                        gamePageEndTime.setText(DateFormatter.ParseDateToString(mGame.getPrice().getEndTime(), Locale.getDefault()));
+                    } else {
+                        gamePageDiscountTime.setVisibility(View.GONE);
+                        gamePageStartTime.setVisibility(View.GONE);
+                        gamePageEndTime.setVisibility(View.GONE);
+                        gamePageDiscountNum.setVisibility(View.GONE);
+                        gamePageDiscountPrice.setVisibility(View.GONE);
+                        Toast.makeText(mContext, getString(R.string.discount_useless), Toast.LENGTH_LONG).show();
+                    }
                 }
 
                 gamePagePrice.setText(mGame.getPrice().getPriceByCurrency() + " " + UserPreferences.getStoredCurrency(mContext));
@@ -138,6 +148,7 @@ public class GamePageActivity extends AppCompatActivity {
             public void onFailed() {
                 gamePagePrice.setText(R.string.failed);
                 gamePageCountry.setText(R.string.failed);
+                Toast.makeText(mContext, getString(R.string.network_error), Toast.LENGTH_LONG).show();
                 progressBar.setVisibility(View.GONE);
                 progress_info.setVisibility(View.GONE);
             }

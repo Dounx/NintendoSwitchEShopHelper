@@ -119,7 +119,13 @@ public class MainActivity extends AppCompatActivity {
                 };
                 CountryGrabTask countryGrabTask = new CountryGrabTask(mContext, listener);
                 countryGrabTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-                UserPreferences.setStoredLanguage(this,"English");
+
+                // Init language in share preferences
+                if (country.getLanguage().equals("zh")) {
+                    UserPreferences.setStoredLanguage(this,"Chinese");
+                } else {
+                    UserPreferences.setStoredLanguage(this,"English");
+                }
 
             } catch (IOException e) {
                 e.printStackTrace();
