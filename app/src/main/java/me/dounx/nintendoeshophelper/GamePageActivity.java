@@ -108,6 +108,8 @@ public class GamePageActivity extends AppCompatActivity {
         final TextView gamePageCountry = findViewById(R.id.game_page_country);
         final ProgressBar progressBar = findViewById(R.id.price_progress_bar);
         final TextView progress_info = findViewById(R.id.progress_info);
+        final TextView gamePageStartTime = findViewById(R.id.game_page_start_time);
+        final TextView gamePageEndTime = findViewById(R.id.game_page_end_time);
 
         final List<SupportedCountry> list = SupportedCountryLab.get(this).getSupportedCountries();
         progressBar.setMax(list.size());
@@ -155,6 +157,8 @@ public class GamePageActivity extends AppCompatActivity {
             public void onFailed() {
                 gamePagePrice.setText(R.string.failed);
                 gamePageCountry.setText(R.string.failed);
+                gamePageStartTime.setText(R.string.failed);
+                gamePageEndTime.setText(R.string.failed);
                 if (mGame.getGameCode() == null || mGame.getUsNsUid() == null && (mGame.getEuNsUid() == null && mGame.getJpNsUid() == null)) {
                     Toast.makeText(mContext, getString(R.string.not_exist), Toast.LENGTH_LONG).show();
                 } else {

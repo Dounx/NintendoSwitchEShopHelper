@@ -2,6 +2,7 @@ package Util;
 
 import android.content.Context;
 
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
@@ -13,18 +14,26 @@ import java.util.Locale;
 public class DateFormatter {
     public static Date ParseStringToDate(String dateString) {
         SimpleDateFormat dateFormatUS = new SimpleDateFormat("MMM d, yyyy", Locale.US);
-        SimpleDateFormat dateFormatEU = new SimpleDateFormat("yyyy-mm-dd", Locale.ENGLISH);
-        SimpleDateFormat dateFormatJP = new SimpleDateFormat("yyyy.m.d", Locale.JAPAN);
+        DateFormat dateFormatEU = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss Z");
+        SimpleDateFormat dateFormatJP = new SimpleDateFormat("yyyy.M.d");
+
+        //  Strict mode
+        dateFormatUS.setLenient(false);
+        dateFormatEU.setLenient(false);
+        dateFormatJP.setLenient(false);
 
         Date date = null;
         try {
             date = dateFormatUS.parse(dateString);
+
         } catch (Exception e0) {
             try {
-                date = dateFormatEU.parse(dateString);
+                date = dateFormatJP.parse(dateString);
+
             } catch (Exception e1) {
                 try {
-                    date = dateFormatJP.parse(dateString);
+                    date = dateFormatEU.parse(dateString.replace("Z", " UTC"));
+
                 } catch (Exception e2) {
                     e2.printStackTrace();
                 }
