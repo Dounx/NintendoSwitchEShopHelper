@@ -95,7 +95,7 @@ public class GameLab {
         Date currentDate = Calendar.getInstance(Locale.US).getTime();
 
         for (int i = 0; i < dates.size(); i++) {
-            if (dates.get(i).after(currentDate)) {
+            if (dates.get(i) != null && dates.get(i).after(currentDate)) {
                 newGames.add(games.get(i));
             }
         }
