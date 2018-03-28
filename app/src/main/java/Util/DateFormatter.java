@@ -36,7 +36,7 @@ public class DateFormatter {
     public static String ParseDateToString(Date date, Locale locale, Context context) {
         SimpleDateFormat dateFormat;
         if (UserPreferences.getStoredLanguage(context).equals("Chinese")) {
-            dateFormat = new SimpleDateFormat("yyyy MMM d", locale);
+            dateFormat = new SimpleDateFormat("yyyy mmm d", locale);
         } else {
             dateFormat = new SimpleDateFormat("MMM d, yyyy", locale);
         }
