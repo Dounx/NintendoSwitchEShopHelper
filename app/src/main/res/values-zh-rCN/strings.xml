@@ -31,7 +31,6 @@
     <string name="update_rate">更新汇率</string>
     <string name="update_country">更新国家</string>
     <string name="network_error">网络错误，请检查你的网络并重试。</string>
-    <string name="unknow">未知</string>
     <string name="discount_useless">这个游戏不打折的售价居然比打折便宜!</string>
     <string name="not_exist">这个游戏没有任何信息。</string>
 
