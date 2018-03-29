@@ -16,8 +16,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import static com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade;
 
-import java.util.Date;
+import java.io.File;
 import java.util.List;
 import java.util.Locale;
 
@@ -28,7 +29,6 @@ import GameGrabber.PriceQueryTask;
 import GameGrabber.SupportedCountry;
 import GameGrabber.SupportedCountryLab;
 import Util.DateFormatter;
-import Util.QueryPreferences;
 import Util.UserPreferences;
 
 public class GamePageActivity extends AppCompatActivity {
@@ -58,7 +58,6 @@ public class GamePageActivity extends AppCompatActivity {
 
         mGame = GameLab.get(this).getGame(title);
 
-
         getSupportActionBar().setTitle(mGame.getTitle());
 
         ImageView gamePageImage = findViewById(R.id.game_page_image);
@@ -71,12 +70,35 @@ public class GamePageActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
-        GlideApp.with(this)
-                .load(mGame.getIconUrl())
-                .error(R.drawable.ic_no_pic)
-                //.diskCacheStrategy(DiskCacheStrategy.ALL)
-                .placeholder(R.drawable.ic_loading)
-                .into(gamePageImage);
+
+        String[] gameImages = new File("data/data/" + mContext.getPackageName() + "/" + "images").list();
+
+        boolean tag = false;
+
+        for (String gameCode : gameImages) {
+            if (gameCode.equals(mGame.getGameCode() + ".jpg")) {
+                tag = true;
+                break;
+            }
+        }
+
+        if (tag) {
+            GlideApp.with(mContext)
+                    .load(new File("data/data/" + mContext.getPackageName() + "/" + "images", mGame.getGameCode() + ".jpg"))
+                    .transition(withCrossFade())
+                    .error(R.drawable.ic_no_pic)
+                    .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
+                    .placeholder(R.drawable.ic_loading)
+                    .into(gamePageImage);
+        } else {
+            GlideApp.with(mContext)
+                    .load(mGame.getIconUrl())
+                    .transition(withCrossFade())
+                    .error(R.drawable.ic_no_pic)
+                    .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
+                    .placeholder(R.drawable.ic_loading)
+                    .into(gamePageImage);
+        }
 
         if (mGame.isDiscount()) {
             TextView gamePageDiscountPrice = findViewById(R.id.game_page_discount_price);

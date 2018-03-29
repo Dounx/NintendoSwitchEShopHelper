@@ -11,11 +11,14 @@ import android.widget.TextView;
 
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 
+import java.io.File;
 import java.util.List;
 import java.util.Locale;
 
 import GameGrabber.Game;
 import Util.DateFormatter;
+
+import static com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade;
 
 public class GameAdapter extends RecyclerView.Adapter<GameAdapter.ViewHolder> {
     private List<Game> mGameList;
@@ -26,7 +29,6 @@ public class GameAdapter extends RecyclerView.Adapter<GameAdapter.ViewHolder> {
         TextView gameName;
         TextView gameReleaseDate;
         TextView gameCategory;
-
 
         public ViewHolder(View view) {
             super(view);
@@ -80,12 +82,34 @@ public class GameAdapter extends RecyclerView.Adapter<GameAdapter.ViewHolder> {
 
         holder.gameCategory.setText(game.getCategory());
 
-        GlideApp.with(mContext)
-                .load(game.getIconUrl())
-                .error(R.drawable.ic_no_pic)
-                //.diskCacheStrategy(DiskCacheStrategy.ALL)
-                .placeholder(R.drawable.ic_loading)
-                .into(holder.gameImage);
+        String[] gameImages = new File("data/data/" + mContext.getPackageName() + "/" + "images").list();
+
+        boolean tag = false;
+
+        for (String gameCode : gameImages) {
+            if (gameCode.equals(game.getGameCode() + ".jpg")) {
+                tag = true;
+                break;
+            }
+        }
+
+        if (tag) {
+            GlideApp.with(mContext)
+                    .load(new File("data/data/" + mContext.getPackageName() + "/" + "images", game.getGameCode() + ".jpg"))
+                    .transition(withCrossFade())
+                    .error(R.drawable.ic_no_pic)
+                    .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
+                    .placeholder(R.drawable.ic_loading)
+                    .into(holder.gameImage);
+        } else {
+            GlideApp.with(mContext)
+                    .load(game.getIconUrl())
+                    .transition(withCrossFade())
+                    .error(R.drawable.ic_no_pic)
+                    .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
+                    .placeholder(R.drawable.ic_loading)
+                    .into(holder.gameImage);
+        }
     }
 
     @Override

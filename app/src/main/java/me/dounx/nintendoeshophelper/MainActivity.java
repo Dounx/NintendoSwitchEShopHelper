@@ -11,7 +11,6 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.StrictMode;
 import android.preference.PreferenceManager;
-import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -27,6 +26,7 @@ import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -36,9 +36,11 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.ListPreloader;
 import com.bumptech.glide.RequestBuilder;
 import com.bumptech.glide.integration.recyclerview.RecyclerViewPreloader;
+import com.bumptech.glide.request.target.Target;
 import com.bumptech.glide.util.FixedPreloadSizeProvider;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -84,7 +86,10 @@ public class MainActivity extends AppCompatActivity {
                     .build());
         }
 
-        // Init Database or Shared Preferences
+        // Get all the images
+        // ImagesDownload();
+
+        // Init Database, Shared Preferences and image files
         PackageInfo info = null;
         try {
             info = getPackageManager().getPackageInfo(getPackageName(), 0);
@@ -93,10 +98,11 @@ public class MainActivity extends AppCompatActivity {
         }
         int currentVersion = info.versionCode;
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        int lastVersion = prefs.getInt("version",0);
+        int lastVersion = prefs.getInt("version", 0);
         if (currentVersion > lastVersion) {
             try {
-                CopySqliteFileFromRawToDatabases("GameBase.db");
+                CopySqliteFile("GameBase.db");
+                CopyImageFile("images");
 
                 // Init User SharedPreferences todo
                 final Locale country;
@@ -122,9 +128,9 @@ public class MainActivity extends AppCompatActivity {
 
                 // Init language in share preferences
                 if (country.getLanguage().equals("zh")) {
-                    UserPreferences.setStoredLanguage(this,"Chinese");
+                    UserPreferences.setStoredLanguage(this, "Chinese");
                 } else {
-                    UserPreferences.setStoredLanguage(this,"English");
+                    UserPreferences.setStoredLanguage(this, "English");
                 }
 
             } catch (IOException e) {
@@ -134,7 +140,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         // Set up the language
-        Resources resources =getResources();
+        Resources resources = getResources();
         Configuration config = resources.getConfiguration();
         DisplayMetrics dm = resources.getDisplayMetrics();
         if (UserPreferences.getStoredLanguage(mContext).equals("Chinese")) {
@@ -153,7 +159,7 @@ public class MainActivity extends AppCompatActivity {
         getSupportActionBar().setTitle(R.string.all_games);
 
         mDrawerLayout = findViewById(R.id.drawer_layout);
-        NavigationView navigationView =findViewById(R.id.nav_view);
+        NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setCheckedItem(R.id.nav_game_all);
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
@@ -180,7 +186,7 @@ public class MainActivity extends AppCompatActivity {
                         getSupportActionBar().setTitle(R.string.nav_discount_games);
                         mDrawerLayout.closeDrawers();
                         break;
-                    case  R.id.nav_settings:
+                    case R.id.nav_settings:
                         // todo clear the select status
                         mDrawerLayout.closeDrawers();
                         Intent intent = new Intent(mContext, SettingsActivity.class);
@@ -210,12 +216,8 @@ public class MainActivity extends AppCompatActivity {
         });
 
         mGames = GameLab.get(this).getGames();
-        FixedPreloadSizeProvider<Game> sizeProvider = new FixedPreloadSizeProvider(500, 250);
-        ListPreloader.PreloadModelProvider modelProvider = new MyPreloadModelProvider();
-        RecyclerViewPreloader<Game> preLoader = new RecyclerViewPreloader<>(Glide.with(this), modelProvider, sizeProvider, 20);
 
         final RecyclerView mRecyclerView = findViewById(R.id.recycler_view);
-        mRecyclerView.addOnScrollListener(preLoader);
         mLayoutManager = new LinearLayoutManager(this);
         mRecyclerView.setLayoutManager(mLayoutManager);
         mRecyclerView.addItemDecoration(new DividerItemDecoration(mRecyclerView.getContext(), mLayoutManager.getOrientation()));
@@ -231,7 +233,7 @@ public class MainActivity extends AppCompatActivity {
                         mFab.setVisibility(View.VISIBLE);
                     }
                 } else {
-                    if (mLayoutManager.findFirstVisibleItemPosition()  == 0) {
+                    if (mLayoutManager.findFirstVisibleItemPosition() == 0) {
                         mFab.setVisibility(View.INVISIBLE);
                     }
                 }
@@ -265,7 +267,7 @@ public class MainActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.search_view, menu);
         MenuItem searchItem = menu.findItem(R.id.menu_item_search);
-        final SearchView searchView = (SearchView)searchItem.getActionView();
+        final SearchView searchView = (SearchView) searchItem.getActionView();
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
@@ -277,7 +279,7 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                QueryPreferences.setStoredQuery(mContext, newText.equals("")? null : newText);
+                QueryPreferences.setStoredQuery(mContext, newText.equals("") ? null : newText);
                 updateItems();
                 return true;
             }
@@ -305,25 +307,6 @@ public class MainActivity extends AppCompatActivity {
             default:
         }
         return true;
-    }
-
-    private class MyPreloadModelProvider implements ListPreloader.PreloadModelProvider {
-        @Override
-        @NonNull
-        public List<String> getPreloadItems(int position) {
-            String url = mGames.get(position).getIconUrl();
-            if (TextUtils.isEmpty(url)) {
-                return Collections.emptyList();
-            }
-            return Collections.singletonList(url);
-        }
-
-        @Override
-        @NonNull
-        public RequestBuilder getPreloadRequestBuilder(Object item) {
-            return GlideApp.with(mContext)
-                            .load((String) item);
-        }
     }
 
     private void refreshData() {
@@ -395,14 +378,14 @@ public class MainActivity extends AppCompatActivity {
         mGameAdapter.notifyDataSetChanged();
     }
 
-    public String  CopySqliteFileFromRawToDatabases(String SqliteFileName) throws IOException {
-        File dir = new File("data/data/" + this.getPackageName() + "/databases");
+    public void CopySqliteFile(String SqliteFileName) throws IOException {
+        File dir = new File("data/data/" + getPackageName() + "/databases");
 
         if (!dir.exists() || !dir.isDirectory()) {
             dir.mkdir();
         }
 
-        File file= new File(dir, SqliteFileName);
+        File file = new File(dir, SqliteFileName);
         InputStream inputStream = null;
         OutputStream outputStream = null;
 
@@ -410,28 +393,93 @@ public class MainActivity extends AppCompatActivity {
             try {
                 file.createNewFile();
 
-                inputStream = this.getClass().getClassLoader().getResourceAsStream("assets/" + SqliteFileName);
+                inputStream = getClass().getClassLoader().getResourceAsStream("assets/" + SqliteFileName);
                 outputStream = new FileOutputStream(file);
 
                 byte[] buffer = new byte[2048];
-                int len ;
+                int len;
 
                 while ((len = inputStream.read(buffer)) != -1) {
-                    outputStream.write(buffer,0,len);
+                    outputStream.write(buffer, 0, len);
                 }
             } catch (IOException e) {
                 e.printStackTrace();
-            }
-            finally {
-                if (outputStream != null) {
+            } finally {
+                try {
                     outputStream.flush();
                     outputStream.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
-                if (inputStream != null) {
+                try {
                     inputStream.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
             }
         }
-        return file.getPath();
+    }
+
+    private void CopyImageFile(final String imageDirName) throws IOException {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                File dir = new File("data/data/" + getPackageName() + "/" + imageDirName);
+
+                if (!dir.exists() || !dir.isDirectory()) {
+                    dir.mkdir();
+                }
+
+                String[] imageNames = null;
+                try {
+                    imageNames = getAssets().list(imageDirName);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+                if (imageNames == null) {
+                    return;
+                }
+
+                InputStream inputStream = null;
+                OutputStream outputStream = null;
+
+                for (String imageName : imageNames) {
+                    if (!imageName.contains("jpg") || imageName.length() != 8) {
+                        continue;
+                    }
+                    File file= new File(dir, imageName);
+                    if (!file.exists()) {
+                        try {
+                            file.createNewFile();
+                            inputStream = getClass().getClassLoader().getResourceAsStream("assets/images/" + imageName);
+                            outputStream = new FileOutputStream(file);
+
+                            byte[] buffer = new byte[4096];
+                            int len ;
+
+                            while ((len = inputStream.read(buffer)) != -1) {
+                                outputStream.write(buffer,0,len);
+                            }
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                        finally {
+                            try  {
+                                outputStream.flush();
+                                outputStream.close();
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                            try {
+                                inputStream.close();
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }
+                }
+            }
+        }).start();
     }
 }
