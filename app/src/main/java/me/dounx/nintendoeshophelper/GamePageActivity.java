@@ -74,7 +74,7 @@ public class GamePageActivity extends AppCompatActivity {
         GlideApp.with(this)
                 .load(mGame.getIconUrl())
                 .error(R.drawable.ic_no_pic)
-                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                //.diskCacheStrategy(DiskCacheStrategy.ALL)
                 .placeholder(R.drawable.ic_loading)
                 .into(gamePageImage);
 

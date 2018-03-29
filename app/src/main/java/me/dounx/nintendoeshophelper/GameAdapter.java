@@ -83,7 +83,7 @@ public class GameAdapter extends RecyclerView.Adapter<GameAdapter.ViewHolder> {
         GlideApp.with(mContext)
                 .load(game.getIconUrl())
                 .error(R.drawable.ic_no_pic)
-                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                //.diskCacheStrategy(DiskCacheStrategy.ALL)
                 .placeholder(R.drawable.ic_loading)
                 .into(holder.gameImage);
     }
