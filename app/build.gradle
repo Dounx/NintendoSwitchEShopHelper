@@ -6,8 +6,8 @@ android {
         applicationId "me.dounx.nintendoeshophelper"
         minSdkVersion 21
         targetSdkVersion 27
-        versionCode 7
-        versionName "1.1.5"
+        versionCode 9
+        versionName "1.1.7"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {

@@ -147,13 +147,15 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
                         euGameGrabTask.getStatus() != AsyncTask.Status.FINISHED ||
                         jpGameGrabTask.getStatus() != AsyncTask.Status.FINISHED) {
                 }
-                getActivity().runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        mProgressDialog.dismiss();
-                        Toast.makeText(mContext, getResources().getString(R.string.update_success), Toast.LENGTH_SHORT).show();
-                    }
-                });
+                if (!getActivity().isDestroyed()) {
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            mProgressDialog.dismiss();
+                            Toast.makeText(mContext, getResources().getString(R.string.update_success), Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                }
             }
         }).start();
 
