@@ -120,6 +120,9 @@ public class PriceQueryTask extends AsyncTask<Game, Integer, Integer> {
             if (currency == null) {
                 iterator.remove();
             } else {
+                if (!ratesMap.containsKey(currency)) {
+                    return TYPE_FAILED;
+                }
                 double rates = ratesMap.get(currency);
                 if (price.getDiscountPrice() != null) {
                     price.setDiscount(String.valueOf(String.format("%.0f", (1 - Double.parseDouble(price.getDiscountPrice()) / Double.parseDouble(price.getPrice())) * 100)) + "%");
