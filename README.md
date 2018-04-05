@@ -2,7 +2,7 @@
 
 Get a full list of games for Nintendo Switch, and find the lowest prices
 
-[中文说明](https://github.com/Dounx/NintendoEShopHelper/blob/master/docs/README-zh.md) | [Wiki](https://github.com/Dounx/NintendoEShopHelper/wiki) | [Google Play](https://play.google.com/store/apps/details?id=me.dounx.nintendoeshophelper)
+[中文说明](https://github.com/Dounx/NintendoEShopHelper/blob/master/docs/README-zh.md) | [Wiki](https://github.com/Dounx/NintendoSwitchEShopHelper/wiki/API-Introduction) | [Google Play](https://play.google.com/store/apps/details?id=me.dounx.nintendoeshophelper)
 
 ### PREREQUISITES
 
