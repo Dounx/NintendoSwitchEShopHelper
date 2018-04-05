@@ -52,7 +52,7 @@ public class USGameGrabTask extends AsyncTask<String, Integer, Integer> {
                     .addPathSegment("game")
                     .addQueryParameter("system", "switch")
                     .addQueryParameter("sort", "title")
-                    .addQueryParameter("direction", "asc")
+                    .addQueryParameter("direction", "c")
                     .addQueryParameter("shop", "ncom")
                     .addQueryParameter("limit", Integer.toString(LIMIT))
                     .addQueryParameter("offset", Integer.toString(offset))
@@ -90,16 +90,6 @@ public class USGameGrabTask extends AsyncTask<String, Integer, Integer> {
     private int parseJsonWithJSONObjectAndAddToDB(String jsonData) {
         try {
             JSONObject jsonObject = new JSONObject(jsonData);
-
-            JSONObject filterObject = jsonObject.getJSONObject("filter");
-            JSONObject systemsObject = filterObject.getJSONObject("systems");
-            int gameCount = systemsObject.getJSONArray("system").getJSONObject(7).getInt("total");
-
-            try (USGameCursorWrapper cursor =  queryUSGames(null, null )) {
-                if (cursor.getCount() == gameCount) {
-                   return 0;
-                }
-            }
 
             JSONObject gamesObject = jsonObject.getJSONObject("games");
 
@@ -151,7 +141,6 @@ public class USGameGrabTask extends AsyncTask<String, Integer, Integer> {
                     addUSGame(usGame);
                 }
             }
-            return gameCount;
         } catch (Exception e) {
             e.printStackTrace();
         }
