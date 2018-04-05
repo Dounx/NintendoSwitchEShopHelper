@@ -42,6 +42,8 @@
     <string name="update_data">更新数据</string>
     <string name="update_game_info">更新游戏</string>
     <string name="update_game_info_summary">更新游戏列表，包含美服，亚服以及欧服的全部游戏数据，等同于在首界面下拉。</string>
+    <string name="update_discount_info">更新折扣</string>
+    <string name="update_discount_info_summary">更新打折游戏列表。</string>
     <string name="update_rate_info">更新汇率</string>
     <string name="update_rate_info_summary">更新最新的汇率信息，在应用启动时已经自动获取过一次。</string>
     <string name="update_support_country">更新国家</string>

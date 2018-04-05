@@ -29,6 +29,11 @@
             android:summary="@string/update_game_info_summary" />
 
         <Preference
+            android:key="update_discount_info"
+            android:title="@string/update_discount_info"
+            android:summary="@string/update_discount_info_summary" />
+
+        <Preference
             android:key="update_rate_info"
             android:title="@string/update_rate_info"
             android:summary="@string/update_rate_info_summary" />

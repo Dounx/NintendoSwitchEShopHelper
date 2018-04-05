@@ -42,6 +42,8 @@
     <string name="update_data">Update Data</string>
     <string name="update_game_info">Update Game Information</string>
     <string name="update_game_info_summary">Update the game list data of US service, Europe service and Japan service.</string>
+    <string name="update_discount_info">Update Discount Information</string>
+    <string name="update_discount_info_summary">Update the discount game info.</string>
     <string name="update_rate_info">Update Rate Information</string>
     <string name="update_rate_info_summary">Update the latest exchange rate.</string>
     <string name="update_support_country">Update Support Country</string>

@@ -59,6 +59,15 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
             }
         });
 
+        final Preference updateDiscount = findPreference("update_discount_info");
+        updateDiscount.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
+                updateDiscount();
+                return true;
+            }
+        });
+
         Preference updateRate = findPreference("update_rate_info");
         updateRate.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
@@ -162,6 +171,31 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
         showProgressDialog(getString(R.string.update_game), euGameGrabTask);
     }
 
+    private void updateDiscount() {
+        final EUGameGrabTask euGameGrabTask = new EUGameGrabTask(mContext);
+
+        euGameGrabTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                while (euGameGrabTask.getStatus() != AsyncTask.Status.FINISHED) {
+                }
+                if (!getActivity().isDestroyed()) {
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            mProgressDialog.dismiss();
+                            Toast.makeText(mContext, getResources().getString(R.string.update_success), Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                }
+            }
+        }).start();
+
+        showProgressDialog(getString(R.string.update_game), euGameGrabTask);
+    }
+
     private void updateRate() {
         final RatesQueryTask ratesQueryTask = new RatesQueryTask(mContext);
 
@@ -212,7 +246,7 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
         ProgressDialog progressDialog = new ProgressDialog(getActivity());
         progressDialog.setTitle(title);
         progressDialog.setMessage(getString(R.string.loading));
-        progressDialog.setCancelable(true);
+        progressDialog.setCancelable(false);
         progressDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
             @Override
             public void onCancel(DialogInterface dialogInterface) {
