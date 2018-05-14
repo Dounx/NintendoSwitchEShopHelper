@@ -16,6 +16,7 @@ Get a full list of games for Nintendo Switch, and find the lowest prices
 
 ### To Do List
 
+* Rewrite this app and build a website for grab data
 * Add notification for new game release or discount
 
 ## OPEN SOURCE LICENSES
