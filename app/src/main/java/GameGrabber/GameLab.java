@@ -135,13 +135,19 @@ public class GameLab {
             Game game = iterator.next();
             // NBA 2K18
             if (game.getGameCode() != null && game.getGameCode().equals("AB38")) {
-                if (game.getUsTitle().equals("NBA 2K18") && game.getJpTitle().equals("NBA 2K18")) {
+                if (game.getUsTitle() == null || game.getJpTitle() == null) {
+                    iterator.remove();
+                } else {
+                    if (game.getUsTitle().equals("NBA 2K18") && game.getJpTitle().equals("NBA 2K18")) {
+                    }
+                    else if (game.getUsTitle().equals("NBA 2K18 Legend Edition") && game.getJpTitle().equals("NBA 2K18 レジェンド エディション")) {
+                    }
+                    else if (game.getUsTitle().equals("NBA 2K18 Legend Edition Gold") && game.getJpTitle().equals("NBA 2K18 レジェンド エディション ゴールド")) {
+                    }
+                    else {
+                        iterator.remove();
+                    }
                 }
-                if (game.getUsTitle().equals("NBA 2K18 Legend Edition") && game.getJpTitle().equals("NBA 2K18 レジェンド エディション")) {
-                }
-                if (game.getUsTitle().equals("NBA 2K18 Legend Edition Gold") && game.getJpTitle().equals("NBA 2K18 レジェンド エディション ゴールド")) {
-                }
-                iterator.remove();
             }
         }
     }

@@ -41,7 +41,6 @@ public class ImageDownloader {
                     try {
                         File file = null;
                         while (file == null) {
-                            Log.d("Download Images", "Start: " + game.getTitle());
                             file = Glide.with(context)
                                     .load(game.getIconUrl())
                                     .downloadOnly(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL)
@@ -58,7 +57,7 @@ public class ImageDownloader {
                                 inputStream = new FileInputStream(file);
                                 outputStream = new FileOutputStream(imageFile);
 
-                                byte[] buffer = new byte[4096];
+                                byte[] buffer = new byte[8192];
                                 int len;
 
                                 while ((len = inputStream.read(buffer)) != -1) {

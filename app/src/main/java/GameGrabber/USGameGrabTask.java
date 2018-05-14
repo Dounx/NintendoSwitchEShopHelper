@@ -63,7 +63,9 @@ public class USGameGrabTask extends AsyncTask<String, Integer, Integer> {
                     .build();
             try (Response response = client.newCall(request).execute()) {
                 String responseData = response.body().string();
-                total = parseJsonWithJSONObjectAndAddToDB(responseData);
+                if (!responseData.equals("{}")) {
+                    total = parseJsonWithJSONObjectAndAddToDB(responseData);
+                }
             } catch (Exception e) {
                 e.printStackTrace();
                 return TYPE_FAILED;

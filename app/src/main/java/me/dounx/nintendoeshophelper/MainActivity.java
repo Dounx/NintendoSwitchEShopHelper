@@ -61,6 +61,7 @@ import GameGrabber.SupportedCountryLab;
 import GameGrabber.USGameGrabTask;
 import Util.QueryPreferences;
 import Util.UserPreferences;
+import Util.ImageDownloader;
 
 public class MainActivity extends AppCompatActivity {
     private static boolean STRICT_MODE = false;
@@ -86,8 +87,30 @@ public class MainActivity extends AppCompatActivity {
                     .build());
         }
 
-        // Get all the images
-        // ImagesDownload();
+        // Update all game data just for debug
+        /*
+        final USGameGrabTask usGameGrabTask = new USGameGrabTask(mContext);
+        final EUGameGrabTask euGameGrabTask = new EUGameGrabTask(mContext);
+        final JPGameGrabTask jpGameGrabTask = new JPGameGrabTask(mContext);
+
+        usGameGrabTask.execute();
+        euGameGrabTask.execute();
+        jpGameGrabTask.execute();
+        */
+
+        // Output result just for debug
+        /*
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                while (usGameGrabTask.getStatus() != AsyncTask.Status.FINISHED ||
+                        euGameGrabTask.getStatus() != AsyncTask.Status.FINISHED ||
+                        jpGameGrabTask.getStatus() != AsyncTask.Status.FINISHED) {
+                }
+                Log.d("Data refresh", "Success!");
+            }
+        }).start();
+        */
 
         // Init Database, Shared Preferences and image files
         PackageInfo info = null;
@@ -138,6 +161,10 @@ public class MainActivity extends AppCompatActivity {
             }
             prefs.edit().putInt("version", currentVersion).apply();
         }
+
+        // Get all the images just for debug todo
+        // ImageDownloader i = new ImageDownloader();
+        // i.ImagesDownload(mContext);
 
         // Set up the language
         Resources resources = getResources();
