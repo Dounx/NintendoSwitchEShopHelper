@@ -2,6 +2,8 @@
 
 获取所有的 Nintendo Switch 游戏列表，并在所有的地区商店中找到最低的价格
 
+由于获取汇率的网站开始收费，以及本应用在手机端进行爬虫活动很耗时，体验不好，因而废弃本应用。接下来会用 Rails On Ruby 重写一个服务用于爬取数据以及推送信息，本应用也将会被重写。感谢下载！
+
 [English Readme](https://github.com/Dounx/NintendoEShopHelper/blob/master/README.md) | [Wiki](https://github.com/Dounx/NintendoSwitchEShopHelper/wiki/API-Introduction) | [下载地址](https://github.com/Dounx/NintendoSwitchEShopHelper/releases/latest)
 
 ### 依赖
