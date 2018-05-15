@@ -2,7 +2,7 @@
 
 Get a full list of games for Nintendo Switch, and find the lowest prices
 
-Because the website that obtains the exchange rate begins to charge, and this application is time consuming for crawling on the mobile phone, the experience is not good and the application is abandoned. Next, we will use Rails On Ruby to overwrite a service for crawling data and pushing information. This application will also be rewritten. Thanks for downloading!
+Because the website that obtains the exchange rate begins to charge, and this application is time consuming for crawling on the mobile phone, the experience is not good and the application is abandoned. Next, we will use Ruby on Rails to overwrite a service for crawling data and pushing information. This application will also be rewritten. Thanks for downloading!
 
 [中文说明](https://github.com/Dounx/NintendoEShopHelper/blob/master/docs/README-zh.md) | [Wiki](https://github.com/Dounx/NintendoSwitchEShopHelper/wiki/API-Introduction) | [Google Play](https://play.google.com/store/apps/details?id=me.dounx.nintendoeshophelper)
 
