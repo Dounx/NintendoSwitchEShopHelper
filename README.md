@@ -1,3 +1,5 @@
+## DEPRECATED! Please move to https://github.com/Dounx/gwitch
+
 ## NintendoSwitchEShopHelper
 
 Get a full list of games for Nintendo Switch, and find the lowest prices
